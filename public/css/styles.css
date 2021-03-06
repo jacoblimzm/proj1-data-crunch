@@ -5,12 +5,16 @@ h1 {
 .tile-grid {
     height: 560px;
     width: 560px;
-    background-color: blue;
+    background-color: black;
     display: flex;
     flex-wrap: wrap;
+    align-content: space-around;
+    justify-content: space-around;
+
 }
 
 .tile {
-    height: 12.5%;
-    width: 12.5%;
+    height: 12%;
+    width: 12%;
+    border-radius: 10%;
 }
