@@ -37,7 +37,7 @@ const hoverSwap = (e) => {
   colorSwap2 = $tileElem.css("background-color"); // store the colour so that we may use it to swap colours.
   idSwap2 = Number($tileElem.attr("id")); // the attribute is returned as a string by default, so convert into a number.
   // console.log(colorSwap2); // console.log to make sure we have grabbed the right information
-  // console.log(idSwap2) // console.log to make sure we have grabbed the right information
+  console.log(idSwap2) // console.log to make sure we have grabbed the right information
 };
 
 let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background color and id for the selected tile, and the intended tile to swap with
@@ -108,23 +108,66 @@ $(() => {
 //   }
 
  // ===== CHECK FOR 4 IN A ROW MATCHES
+//   for (let i = 0; i < num**2; i++) {
+//       let invalidTiles = [5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53, 54, 55];
+//       let $divTiles = $(".tile");
+
+//       if (!invalidTiles.includes(i)) {
+//         let tileColor = $divTiles.eq(i).css("background-color");
+//         let tileColor1 = $divTiles.eq(i + 1).css("background-color");
+//         let tileColor2 = $divTiles.eq(i + 2).css("background-color");
+//         let tileColor3 = $divTiles.eq(i + 3).css("background-color");
+//       if (tileColor === tileColor1 && tileColor1 === tileColor2 && tileColor2 === tileColor3) {
+//         $divTiles.eq(i).css("background-color", "#fff");
+//         $divTiles.eq(i + 1).css("background-color", "#fff");
+//         $divTiles.eq(i + 2).css("background-color", "#fff");
+//         $divTiles.eq(i + 3).css("background-color", "#fff");
+//         score += 4;
+//         console.log(score);
+//       }
+//     }
+//   }
+
+
+// ===== CHECK FOR 3 IN A COL MATCH
+
+// for (let i = 0; i < num ** 2; i++) {
+//     let $divTiles = $(".tile");
+
+    
+//       let tileColor = $divTiles.eq(i).css("background-color");
+//       let tileColor1 = $divTiles.eq(i + 8).css("background-color");
+//       let tileColor2 = $divTiles.eq(i + 16).css("background-color");
+//       if (tileColor === tileColor1 && tileColor1 === tileColor2) {
+//         $divTiles.eq(i).css("background-color", "#fff");
+//         $divTiles.eq(i + 8).css("background-color", "#fff");
+//         $divTiles.eq(i + 16).css("background-color", "#fff");
+//         score += 3;
+//         console.log(score);
+//       }
+//     }
+
+
+// ====== CHECK FOR 4 IN A COL MATCH
+
   for (let i = 0; i < num**2; i++) {
-      let invalidTiles = [5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53, 54, 55];
+      
       let $divTiles = $(".tile");
 
-      if (!invalidTiles.includes(i)) {
         let tileColor = $divTiles.eq(i).css("background-color");
-        let tileColor1 = $divTiles.eq(i + 1).css("background-color");
-        let tileColor2 = $divTiles.eq(i + 2).css("background-color");
-        let tileColor3 = $divTiles.eq(i + 3).css("background-color");
+        let tileColor1 = $divTiles.eq(i + 8).css("background-color");
+        let tileColor2 = $divTiles.eq(i + 16).css("background-color");
+        let tileColor3 = $divTiles.eq(i + 24).css("background-color");
       if (tileColor === tileColor1 && tileColor1 === tileColor2 && tileColor2 === tileColor3) {
         $divTiles.eq(i).css("background-color", "#fff");
-        $divTiles.eq(i + 1).css("background-color", "#fff");
-        $divTiles.eq(i + 2).css("background-color", "#fff");
-        $divTiles.eq(i + 3).css("background-color", "#fff");
+        $divTiles.eq(i + 8).css("background-color", "#fff");
+        $divTiles.eq(i + 16).css("background-color", "#fff");
+        $divTiles.eq(i + 24).css("background-color", "#fff");
         score += 4;
         console.log(score);
       }
     }
-  }
+
+
+
 }); // end of jQuery onready function.
