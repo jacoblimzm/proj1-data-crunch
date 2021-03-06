@@ -3,6 +3,7 @@ const $tileGrid = $(".tile-grid");
 const colors = ["red", "green", "blue", "yellow", "purple"]; // creating an array of colours so we can assign random colours to the tile divs in the HTML.
 let num = 8;
 let score = 0;
+let blank = "rgb(255, 255, 255)";
 
 // ========== FUNCTION FOR CREATING THE BOARD ==========
 
@@ -98,9 +99,9 @@ $(() => {
 //       let tileColor1 = $divTiles.eq(i + 1).css("background-color");
 //       let tileColor2 = $divTiles.eq(i + 2).css("background-color");
 //       if (tileColor === tileColor1 && tileColor1 === tileColor2) {
-//         $divTiles.eq(i).css("background-color", "#fff");
-//         $divTiles.eq(i + 1).css("background-color", "#fff");
-//         $divTiles.eq(i + 2).css("background-color", "#fff");
+//         $divTiles.eq(i).css("background-color", blank);
+//         $divTiles.eq(i + 1).css("background-color", blank);
+//         $divTiles.eq(i + 2).css("background-color", blank);
 //         score += 3;
 //         console.log(score);
 //       }
@@ -118,10 +119,10 @@ $(() => {
 //         let tileColor2 = $divTiles.eq(i + 2).css("background-color");
 //         let tileColor3 = $divTiles.eq(i + 3).css("background-color");
 //       if (tileColor === tileColor1 && tileColor1 === tileColor2 && tileColor2 === tileColor3) {
-//         $divTiles.eq(i).css("background-color", "#fff");
-//         $divTiles.eq(i + 1).css("background-color", "#fff");
-//         $divTiles.eq(i + 2).css("background-color", "#fff");
-//         $divTiles.eq(i + 3).css("background-color", "#fff");
+//         $divTiles.eq(i).css("background-color", blank);
+//         $divTiles.eq(i + 1).css("background-color", blank);
+//         $divTiles.eq(i + 2).css("background-color", blank);
+//         $divTiles.eq(i + 3).css("background-color", blank);
 //         score += 4;
 //         console.log(score);
 //       }
@@ -139,9 +140,9 @@ $(() => {
 //       let tileColor1 = $divTiles.eq(i + 8).css("background-color");
 //       let tileColor2 = $divTiles.eq(i + 16).css("background-color");
 //       if (tileColor === tileColor1 && tileColor1 === tileColor2) {
-//         $divTiles.eq(i).css("background-color", "#fff");
-//         $divTiles.eq(i + 8).css("background-color", "#fff");
-//         $divTiles.eq(i + 16).css("background-color", "#fff");
+//         $divTiles.eq(i).css("background-color", blank);
+//         $divTiles.eq(i + 8).css("background-color", blank);
+//         $divTiles.eq(i + 16).css("background-color", blank);
 //         score += 3;
 //         console.log(score);
 //       }
@@ -159,15 +160,31 @@ $(() => {
         let tileColor2 = $divTiles.eq(i + 16).css("background-color");
         let tileColor3 = $divTiles.eq(i + 24).css("background-color");
       if (tileColor === tileColor1 && tileColor1 === tileColor2 && tileColor2 === tileColor3) {
-        $divTiles.eq(i).css("background-color", "#fff");
-        $divTiles.eq(i + 8).css("background-color", "#fff");
-        $divTiles.eq(i + 16).css("background-color", "#fff");
-        $divTiles.eq(i + 24).css("background-color", "#fff");
+        $divTiles.eq(i).css("background-color", blank);
+        $divTiles.eq(i + 8).css("background-color", blank);
+        $divTiles.eq(i + 16).css("background-color", blank);
+        $divTiles.eq(i + 24).css("background-color", blank);
         score += 4;
         console.log(score);
       }
     }
 
+    setTimeout(() => {
 
+        for (let i = 0; i< num**2; i++) {
+
+            let $divTiles = $(".tile");
+            let tileColor = $divTiles.eq(i).css("background-color");
+            let tileColor1 = $divTiles.eq(i + 8).css("background-color");
+            console.log(tileColor1)
+            if (tileColor1 === blank) {
+                $divTiles.eq(i).css("background-color", blank);
+                $divTiles.eq(i + 8).css("background-color", tileColor);
+                
+            }
+        }
+        
+    }, 2000);
+    
 
 }); // end of jQuery onready function.
