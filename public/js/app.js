@@ -157,8 +157,9 @@ const moveTilesDown = () => {
 };
 
 
-// ========== COLOUR SWAPPING FUNCTIONALITY USING CLICK AND HOVER EVENT LISTENERS ==========
+// ========== EVENT LISTENERS ==========
 
+// ====== COLOUR SWAPPING FUNCTIONALITY USING CLICK AND HOVER
 let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background color and id for the selected tile, and the intended tile to swap with
 let validTilesSwap = [];
 
@@ -208,12 +209,23 @@ const clickSwap = (e) => {
   // console.log(idSwap1); // make sure we have grabbed the right info
 };
 
+// ===== RESET BUTTON
+
+const restartGame = () => {
+    $(".tile-grid").empty();
+    score = 0;
+    moveCount = 10;
+    $("#score").text(score);
+    $("#moves").text(moveCount);
+    createTiles();
+}
 
 
 // ========== MAIN jQUERY FUNCTION ==========
 $(() => {
   createTiles(); // creating the tiles
 
+  $("button").on("click", restartGame);
 
 setInterval(() => {
     moveTilesDown();
@@ -221,7 +233,7 @@ setInterval(() => {
     checkColFour();
     checkRowThree();
     checkColThree();
-}, 1000);
+}, 500);
 
 
 }); // end of jQuery onready function.
