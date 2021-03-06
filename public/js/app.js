@@ -42,10 +42,11 @@ const hoverSwap = (e) => {
     // console.log(idSwap2) // console.log to make sure we have grabbed the right information
   };
 
-  let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background color and id for the selected tile, and the intended tile to swap with
-  let validTilesSwap = [];
 
+let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background color and id for the selected tile, and the intended tile to swap with
+let validTilesSwap = [];
   const clickSwap = (e) => {
+    
     // need the event object which is passed into the callback function from the event listener. can access many properties of the element through the event object.
     let tileElem = e.target; // e.target is the way to access the properties with an anonymous function.
     let $tileElem = $(tileElem);
@@ -90,5 +91,24 @@ $(() => {
 //   let $tiles = $(".tile"); // returns ALL the jQuery nodes with .tile class. diff from a regular array. it is a collection.
 //   $tiles.on("click", clickSwap); // apply the event listener to ALL tiles
 //   $tiles.on("mouseover", hoverSwap); // apply the event listener to ALL tiles
-  
+
+/// ========== CHECKING FOR MATCHES ==========
+
+for (let i = 0; i < num**2; i++) {
+
+    let $divTiles = $(".tile");
+    let tileColor = $divTiles.eq(i).css("background-color");
+    let tileColor1 = $divTiles.eq(i+1).css("background-color");
+    let tileColor2 = $divTiles.eq(i+2).css("background-color");
+
+    if (tileColor === tileColor1 && tileColor1 === tileColor2) {
+        $divTiles.eq(i).css("background-color", "#fff");
+        $divTiles.eq(i+1).css("background-color", "#fff");
+        $divTiles.eq(i+2).css("background-color", "#fff");
+    }
+
+}
+
+
+
 }); // end of jQuery onready function.
