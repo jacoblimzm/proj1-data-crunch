@@ -27,60 +27,6 @@ const createTiles = () => {
   }
 };
 
-// ========== COLOUR SWAPPING FUNCTIONALITY USING CLICK AND HOVER EVENT LISTENERS ==========
-
-const hoverSwap = (e) => {
-  let tileElem = e.target; // grabbing the event object and the target, which is the div, because we are interested in the properties.
-  // console.log(tileElem) // console.log to ensure we have grabbed the correct target. the DIV node should be logged.
-  let $tileElem = $(tileElem); // wrapping the vanilla JS node in money so it becomes a jQuery object and we can work with it.
-  colorSwap2 = $tileElem.css("background-color"); // store the colour so that we may use it to swap colours.
-  idSwap2 = Number($tileElem.attr("id")); // the attribute is returned as a string by default, so convert into a number.
-  // console.log(colorSwap2); // console.log to make sure we have grabbed the right information
-//   console.log(idSwap2) // console.log to make sure we have grabbed the right information
-};
-
-let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background color and id for the selected tile, and the intended tile to swap with
-let validTilesSwap = [];
-const clickSwap = (e) => {
-  // need the event object which is passed into the callback function from the event listener. can access many properties of the element through the event object.
-  let tileElem = e.target; // e.target is the way to access the properties with an anonymous function.
-  let $tileElem = $(tileElem);
-
-  let rightEdgeTiles = [7, 15, 23, 31, 39, 47, 55]; // don't want the RIGHT EDGE tiles to be able to be swapped with LEFT EDGE tile on following row
-  let leftEdgeTiles = [0, 8, 16, 24, 32, 40, 48, 56]; // don't want the LEFT EDGE tiles to be able to be swapped with RIGHT EDGE tile on following row
-
-  if (colorSwap1 !== undefined && validTilesSwap.includes(idSwap2)) {
-    // we only want to swap the colours if there is an existing colour stored in colorSwap1(which means a prior click has been made), AND the cursor is hovering over a different tile.
-    //   console.log($(".tile").eq(idSwap2)) // check we have selected the right jQuery object.
-    $(".tile").eq(idSwap2).css("background-color", colorSwap1); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
-    $(".tile").eq(idSwap1).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
-    idSwap1 = null; // after the swap has been completed, reset the idSwap1.
-    colorSwap1 = undefined; // reset colorSwap1 as well.
-  } else { // if there is no existing id stored in idSwap1 and color stored in colorSwap1, store upon click.
-    // because this means game just started, or swap just been made.
-    idSwap1 = parseInt($tileElem.attr("id"));
-    colorSwap1 = $tileElem.css("background-color");
-    // ==== we also want to restrict the tiles that can be swapped to simply the tiles directly beside, above, and below it.
-    if (rightEdgeTiles.includes(idSwap1)) {
-      // if right edge tile is clicked, the valid tiles for swapping are only above, left, below (which are n(size of grid) tiles away)
-      validTilesSwap = [idSwap1 - num, idSwap1 - 1, idSwap1 + num];
-    } else if (leftEdgeTiles.includes(idSwap1)) {
-      // if left edge tile is clicked, the valid tiles for swapping are only above, right, below
-      validTilesSwap = [idSwap1 - num, idSwap1 + 1, idSwap1 + num];
-    } else {
-      validTilesSwap = [idSwap1 - num, idSwap1 - 1, idSwap1 + 1, idSwap1 + num]; // all other tiles, above, left, right, below can be swapped.
-    }
-    //
-  }
-  // console.log(colorSwap1); // make sure we have grabbed the right info
-  // console.log(idSwap1); // make sure we have grabbed the right info
-};
-
-// ========== MAIN jQUERY FUNCTION ==========
-$(() => {
-  createTiles(); // creating the tiles
-
-
   /// ========== CHECKING FOR MATCHES ==========
   // ====== CHECK FOR 3 IN A ROW MATCHES
 
@@ -137,7 +83,6 @@ const checkRowFour = () => { // loop through all the tiles in the grid
       }
     }    
 }
-
 
 
 // ===== CHECK FOR 3 IN A COL MATCH
@@ -210,16 +155,69 @@ const moveTilesDown = () => {
     }
 };
 
+
+// ========== COLOUR SWAPPING FUNCTIONALITY USING CLICK AND HOVER EVENT LISTENERS ==========
+
+const hoverSwap = (e) => {
+  let tileElem = e.target; // grabbing the event object and the target, which is the div, because we are interested in the properties.
+  // console.log(tileElem) // console.log to ensure we have grabbed the correct target. the DIV node should be logged.
+  let $tileElem = $(tileElem); // wrapping the vanilla JS node in money so it becomes a jQuery object and we can work with it.
+  colorSwap2 = $tileElem.css("background-color"); // store the colour so that we may use it to swap colours.
+  idSwap2 = Number($tileElem.attr("id")); // the attribute is returned as a string by default, so convert into a number.
+  // console.log(colorSwap2); // console.log to make sure we have grabbed the right information
+//   console.log(idSwap2) // console.log to make sure we have grabbed the right information
+};
+
+let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background color and id for the selected tile, and the intended tile to swap with
+let validTilesSwap = [];
+const clickSwap = (e) => {
+  // need the event object which is passed into the callback function from the event listener. can access many properties of the element through the event object.
+  let tileElem = e.target; // e.target is the way to access the properties with an anonymous function.
+  let $tileElem = $(tileElem);
+  let rightEdgeTiles = [7, 15, 23, 31, 39, 47, 55]; // don't want the RIGHT EDGE tiles to be able to be swapped with LEFT EDGE tile on following row
+  let leftEdgeTiles = [0, 8, 16, 24, 32, 40, 48, 56]; // don't want the LEFT EDGE tiles to be able to be swapped with RIGHT EDGE tile on following row
+
+  if (colorSwap1 !== undefined && validTilesSwap.includes(idSwap2)) {
+    // we only want to swap the colours if there is an existing colour stored in colorSwap1(which means a prior click has been made), AND the cursor is hovering over a different tile.
+    // console.log($(".tile").eq(idSwap2)) // check we have selected the right jQuery object.
+    $(".tile").eq(idSwap2).css("background-color", colorSwap1); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
+    $(".tile").eq(idSwap1).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
+    idSwap1 = null; // after the swap has been completed, reset the idSwap1.
+    colorSwap1 = undefined; // reset colorSwap1 as well.
+  } else { // if there is no existing id stored in idSwap1 and color stored in colorSwap1, store upon click.
+    // because this means game just started, or swap just been made.
+    idSwap1 = parseInt($tileElem.attr("id"));
+    colorSwap1 = $tileElem.css("background-color");
+    // ==== we also want to restrict the tiles that can be swapped to simply the tiles directly beside, above, and below it.
+    if (rightEdgeTiles.includes(idSwap1)) {
+      // if right edge tile is clicked, the valid tiles for swapping are only above, left, below (which are n(size of grid) tiles away)
+      validTilesSwap = [idSwap1 - num, idSwap1 - 1, idSwap1 + num];
+    } else if (leftEdgeTiles.includes(idSwap1)) {
+      // if left edge tile is clicked, the valid tiles for swapping are only above, right, below
+      validTilesSwap = [idSwap1 - num, idSwap1 + 1, idSwap1 + num];
+    } else {
+      validTilesSwap = [idSwap1 - num, idSwap1 - 1, idSwap1 + 1, idSwap1 + num]; // all other tiles, above, left, right, below can be swapped.
+    }
+    //
+  }
+  // console.log(colorSwap1); // make sure we have grabbed the right info
+  // console.log(idSwap1); // make sure we have grabbed the right info
+};
+
+
+
+// ========== MAIN jQUERY FUNCTION ==========
+$(() => {
+  createTiles(); // creating the tiles
+
+
 setInterval(() => {
     moveTilesDown();
     checkRowFour();
     checkColFour();
     checkRowThree();
     checkColThree();
-    
 }, 1000);
 
-    
-    
 
 }); // end of jQuery onready function.
