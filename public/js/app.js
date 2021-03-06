@@ -188,22 +188,31 @@ const checkColFour = () => {
 const moveTilesDown = () => {
 
     for (let i = 0; i< num**2; i++) {
-        setInterval(() => {
+
+    const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
             let $divTiles = $(".tile");
-        let tileColor = $divTiles.eq(i).css("background-color");
-        let tileColor1 = $divTiles.eq(i + 8).css("background-color");
+            let tileColor = $divTiles.eq(i).css("background-color");
+            let tileColor1 = $divTiles.eq(i + num).css("background-color");
         
-        if (tileColor1 === blank) {
-            $divTiles.eq(i).css("background-color", blank);
-            $divTiles.eq(i + 8).css("background-color", tileColor);
-            
-        }
-        }, 500);
+            if (tileColor1 === blank) {
+                $divTiles.eq(i).css("background-color", blank);
+                $divTiles.eq(i + num).css("background-color", tileColor);
+                
+            }
+            if (firstRow.includes(i) && $divTiles.eq(i).css("background-color") === blank) {
+                $divTiles.eq(i).css("background-color", colors[randInt()]);
+            }
         
     }
 };
-        
-moveTilesDown();
+
+setInterval(() => {
+    moveTilesDown();
+    checkRowThree();
+    checkColThree();
+    
+}, 1000);
+
     
     
 
