@@ -1,5 +1,7 @@
 
 body {
+    /* background: url("https://cdn.vox-cdn.com/thumbor/ef8rKhLBNRURnMeh1bmBhA7jyDM=/0x0:2040x1360/1225x1225/filters:focal(857x517:1183x843):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/64670831/acastro_190703_1777_pixel_tracking_0001.0.jpg"); */
+    background-size: cover;
     font-family: Helvetica, sans-serif;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -35,6 +37,10 @@ button {
     width: 12%;
     border-radius: 1rem;
 }
+
+/* #landing {
+    
+} */
 
 #round-div {
     grid-area: 1/1/2/2;

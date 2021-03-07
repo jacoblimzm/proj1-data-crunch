@@ -1,11 +1,49 @@
-const $tileGrid = $(".tile-grid"); // assigning the query selector for the grid to a variable since it's gonna be used a lot.
+// const $body = $("body");
+// const $tileGrid = $(".tile-grid"); // assigning the query selector for the grid to a variable since it's gonna be used a lot.
 const colors = ["red", "green", "blue", "yellow", "purple"]; // creating an array of colours so we can assign random colours to the tile divs in the HTML.
 let num = 8; // the size of the grid;
 let score = 0;
 let moveCount = 10;
 let blank = "rgb(255, 255, 255)";
 
-// ========== FUNCTION FOR CREATING THE BOARD ==========
+// ========== FUNCTIONS FOR CREATING THE BOARD ==========
+
+const createBoard = () => {
+    // the round text div
+    $h1Round = $("<h1>").text("Round")
+    $h2Round = $("<h2>").attr("id", "round").text("1");
+    $divRound = $("<div>").attr("id", "round-div");
+    $divRound.append($h1Round).append($h2Round);
+    console.log($divRound)
+    
+    // score text div
+    $h1Score = $("<h1>").text("Score")
+    $h2Score = $("<h2>").attr("id", "score").text("0");
+    $divScore = $("<div>").attr("id", "score-div");
+    $divScore.append($h1Score).append($h2Score);
+
+    // moves left div
+    $h1Moves = $("<h1>").text("Moves")
+    $h2Moves = $("<h2>").attr("id", "moves").text("10");
+    $divMoves = $("<div>").attr("id", "moves-div");
+    $divMoves.append($h1Moves).append($h2Moves);
+
+    // tile grid div
+    $divGrid = $("<div>").attr("class", "tile-grid");
+
+    // button div
+    $button = $("<button>").text("Restart?")
+    $divButton = $("<div>").attr("id", "button-div");
+    $divButton.append($button);
+    
+    
+    $("body").append($divRound);
+    $("body").append($divScore);
+    $("body").append($divMoves);
+    $("body").append($divGrid);
+    $("body").append($divButton);
+
+}
 
 const randInt = () => {
   // random integer generator to be used for random colour picking. dependent on colors array.
@@ -24,7 +62,7 @@ const createTiles = () => {
     $divTile.on("click", clickSwap);
     $divTile.on("mouseover", hoverSwap);
     // append each tile to the body.
-    $tileGrid.append($divTile);
+    $(".tile-grid").append($divTile);
   }
 };
 
@@ -223,17 +261,27 @@ const restartGame = () => {
 
 // ========== MAIN jQUERY FUNCTION ==========
 $(() => {
-  createTiles(); // creating the tiles
+    
+    createBoard();
+    createTiles(); // creating the tiles
 
   $("button").on("click", restartGame);
-
-setInterval(() => {
+  
+  setInterval(() => {
     moveTilesDown();
     checkRowFour();
     checkColFour();
     checkRowThree();
     checkColThree();
-}, 500);
+  }, 500);
+
+// ========== THE START PAGE ==========
+
+// $body.empty();
+// $landingDiv = $("<div>").attr("id", "landing");
+// $body.append($landingDiv);
+
+
 
 
 }); // end of jQuery onready function.
