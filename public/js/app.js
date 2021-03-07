@@ -6,15 +6,18 @@ let score = 0;
 let moveCount = 10;
 let blank = "rgb(255, 255, 255)";
 
+
+
+
 // ========== FUNCTIONS FOR CREATING THE BOARD ==========
 
 const createBoard = () => {
+    $("body").empty();
     // the round text div
     $h1Round = $("<h1>").text("Round")
     $h2Round = $("<h2>").attr("id", "round").text("1");
     $divRound = $("<div>").attr("id", "round-div");
     $divRound.append($h1Round).append($h2Round);
-    console.log($divRound)
     
     // score text div
     $h1Score = $("<h1>").text("Score")
@@ -32,16 +35,11 @@ const createBoard = () => {
     $divGrid = $("<div>").attr("class", "tile-grid");
 
     // button div
-    $button = $("<button>").text("Restart?")
+    $button = $("<button>").text("Restart?").attr('id', "restart")
     $divButton = $("<div>").attr("id", "button-div");
     $divButton.append($button);
     
-    
-    $("body").append($divRound);
-    $("body").append($divScore);
-    $("body").append($divMoves);
-    $("body").append($divGrid);
-    $("body").append($divButton);
+    $("body").append($divRound).append($divScore).append($divMoves).append($divGrid).append($divButton);
 
 }
 
@@ -259,29 +257,37 @@ const restartGame = () => {
 }
 
 
+const landingPage = () => {
+    $landingDiv = $("<div>").attr("id", "landing");
+    $img = $("<img>").attr("id", "landing-image").attr("src", "public/images/hacker.png");
+    $landingDiv.append($img);
+    $("body").append($landingDiv);
+
+}
+
 // ========== MAIN jQUERY FUNCTION ==========
 $(() => {
-    
-    createBoard();
-    createTiles(); // creating the tiles
-
-  $("button").on("click", restartGame);
-  
-  setInterval(() => {
-    moveTilesDown();
-    checkRowFour();
-    checkColFour();
-    checkRowThree();
-    checkColThree();
-  }, 500);
-
-// ========== THE START PAGE ==========
-
-// $body.empty();
-// $landingDiv = $("<div>").attr("id", "landing");
-// $body.append($landingDiv);
 
 
+
+//   createBoard();
+//   createTiles(); // creating the tiles
+
+//   $("button").on("click", restartGame);
+
+//   setInterval(() => {
+//     moveTilesDown();
+//     checkRowFour();
+//     checkColFour();
+//     checkRowThree();
+//     checkColThree();
+//   }, 500);
+
+  // ========== THE START PAGE ==========
+
+  // $body.empty();
+  // $landingDiv = $("<div>").attr("id", "landing");
+  // $body.append($landingDiv);
 
 
 }); // end of jQuery onready function.

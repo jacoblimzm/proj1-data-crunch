@@ -11,13 +11,12 @@ body {
 h1 {
     color: blue;
     text-align: center;
+    font-size: 2rem;
 }
 h2 {
     text-align: center;
-}
-button {
-    position: absolute;
-    top: 45%;
+    /* color: white; */
+    font-size: 2rem;
 }
 
 .tile-grid {
@@ -38,12 +37,24 @@ button {
     border-radius: 1rem;
 }
 
-/* #landing {
-    
-} */
+.form-floating {
+    margin: 20px 50px;
+}
+
+#landing {
+    margin-top: 50px;
+    grid-area: 1/3/4/4;
+}
+
+#landing img {
+    display: block;
+    margin: 0 auto;
+    height: 40%;
+}
+
 
 #round-div {
-    grid-area: 1/1/2/2;
+    grid-area: 1/2/2/1;
     
 }
 #score-div {
@@ -57,4 +68,12 @@ button {
 #button-div {
     grid-area: 2/5/3/6;
     position: relative;
+}
+
+#restart {
+    position: absolute;
+    top: 45%;
+    right: 45%;
+    height: 50%;
+    width: 50%;
 }
