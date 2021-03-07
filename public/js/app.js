@@ -4,6 +4,7 @@ const colors = ["red", "green", "blue", "yellow", "purple"]; // creating an arra
 let num = 8; // the size of the grid;
 let score = 0;
 let moveCount = 10;
+let userName = "";
 let blank = "rgb(255, 255, 255)";
 
 
@@ -256,6 +257,21 @@ const restartGame = () => {
     createTiles();
 }
 
+const playGame = (e) => {
+
+    // GETTING FORM DATA
+
+    // Method 1 - Simply targeting the specific input element
+    // console.log($("#userName").val())
+
+    // Method 2- Parsing the entire form's data into an object which you can then retrieve with the 'name' attribute.
+    const formData = new FormData(e.target);
+    userName = formData.get("user-name");
+    e.preventDefault();
+    createBoard();
+    createTiles();
+}
+
 
 const landingPage = () => {
     $landingDiv = $("<div>").attr("id", "landing");
@@ -268,7 +284,7 @@ const landingPage = () => {
 // ========== MAIN jQUERY FUNCTION ==========
 $(() => {
 
-
+    $("form").on("submit", playGame)
 
 //   createBoard();
 //   createTiles(); // creating the tiles
