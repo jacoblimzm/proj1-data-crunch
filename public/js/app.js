@@ -36,7 +36,8 @@ const createBoard = () => {
     $divGrid = $("<div>").attr("class", "tile-grid");
 
     // button div
-    $button = $("<button>").text("Restart?").attr('id', "restart")
+    $button = $("<button>").text("Restart?").attr('id', "restart").attr("class", "btn btn-primary")
+    $button.on("click", restartGame);
     $divButton = $("<div>").attr("id", "button-div");
     $divButton.append($button);
     
@@ -82,7 +83,7 @@ const createTiles = () => {
           // if the tiles are all the same colur, make them all blank!
           if (tileColor === tileColor1 && tileColor1 === tileColor2) {
             if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
-                score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS
+                score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS to prevent adding of score when there are blanks being filled in.
                 $("#score").text(score);
             }
             $divTiles.eq(i).css("background-color", blank);
@@ -152,11 +153,12 @@ const checkColFour = () => {
     for (let i = 0; i < num**2; i++) { // loop through all the tiles in the grid
         // array of invalid tiles not needed here, as columns don't cross.
         let $divTiles = $(".tile");
-        // save the colours of the THREE tiles. one tile below the current is always i + (n * size of grid).
+        // save the colours of the FOUR tiles. one tile below the current is always i + (n * size of grid).
           let tileColor = $divTiles.eq(i).css("background-color");
           let tileColor1 = $divTiles.eq(i + num * 1).css("background-color");
           let tileColor2 = $divTiles.eq(i + num * 2).css("background-color");
           let tileColor3 = $divTiles.eq(i + num * 3).css("background-color");
+
           // if colours are the same, then change all to blank.
         if (tileColor === tileColor1 && tileColor1 === tileColor2 && tileColor2 === tileColor3) {
             if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
@@ -193,12 +195,17 @@ const moveTilesDown = () => {
     }
 };
 
+// ========== ONLY ALLOWING FOR SWAP IF THE MATCH IS VALID ==========
+
+
 
 // ========== EVENT LISTENERS ==========
 
 // ====== COLOUR SWAPPING FUNCTIONALITY USING CLICK AND HOVER
 let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background color and id for the selected tile, and the intended tile to swap with
-let validTilesSwap = [];
+let validTilesSwap = []; // array storing position of valid tiles for swapping only if beside each other.
+const checkColorMatch = []; //array which stores all the colors at at one time, to check if a match has been made after a click. if not, tile swap back.
+
 
 const hoverSwap = (e) => {
   let tileElem = e.target; // grabbing the event object and the target, which is the div, because we are interested in the properties.
@@ -222,10 +229,35 @@ const clickSwap = (e) => {
     // console.log($(".tile").eq(idSwap2)) // check we have selected the right jQuery object.
     $(".tile").eq(idSwap2).css("background-color", colorSwap1); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
     $(".tile").eq(idSwap1).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
-    idSwap1 = null; // after the swap has been completed, reset the idSwap1.
-    colorSwap1 = undefined; // reset colorSwap1 as well.
-    moveCount -= 1; // decrease count everytime move has been made
-    $("#moves").text(moveCount) // update the move counter.
+    
+    checkRowThree();
+
+    // we want to make sure there are matches, if no matches switch back;
+
+    for (let i = 0; i < num**2; i++) {
+        const tileColor = $(".tile").eq(i).css("background-color");
+        checkColorMatch.push(tileColor)
+    }     
+        
+    if (checkColorMatch.includes(blank)) {
+        idSwap1 = null; // after the swap has been completed, reset the idSwap1.
+        colorSwap1 = undefined; // reset colorSwap1 as well.
+        moveCount -= 1; // decrease count everytime move has been made
+        $("#moves").text(moveCount) // update the move counter.
+        
+    } else {
+        $(".tile").eq(idSwap2).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
+        $(".tile").eq(idSwap1).css("background-color", colorSwap1);
+        
+    }
+        
+    while (checkColorMatch.includes(blank)) {
+        moveTilesDown();
+        checkColorMatch.pop();
+    }
+
+    checkColorMatch.length = 0;
+    
   } else { // if there is no existing id stored in idSwap1 and color stored in colorSwap1, store upon click.
     // because this means game just started, or swap just been made.
     idSwap1 = parseInt($tileElem.attr("id"));
@@ -246,6 +278,7 @@ const clickSwap = (e) => {
   // console.log(idSwap1); // make sure we have grabbed the right info
 };
 
+
 // ===== RESET BUTTON
 
 const restartGame = () => {
@@ -257,6 +290,8 @@ const restartGame = () => {
     createTiles();
 }
 
+
+// ===== PLAY GAME, WHICH TAKES THE USER'S NAME. HANDLES THE FORM'S DATA
 const playGame = (e) => {
 
     // GETTING FORM DATA
@@ -270,6 +305,15 @@ const playGame = (e) => {
     e.preventDefault();
     createBoard();
     createTiles();
+
+    // Only when the play button is clicked, does the checking of the matches begin!!!
+//       setInterval(() => {
+//     moveTilesDown();
+//     checkRowFour();
+//     checkColFour();
+//     checkRowThree();
+//     checkColThree();
+//   }, 500);
 }
 
 
@@ -284,20 +328,12 @@ const landingPage = () => {
 // ========== MAIN jQUERY FUNCTION ==========
 $(() => {
 
+    // attaching a 
     $("form").on("submit", playGame)
 
-//   createBoard();
-//   createTiles(); // creating the tiles
 
-//   $("button").on("click", restartGame);
 
-//   setInterval(() => {
-//     moveTilesDown();
-//     checkRowFour();
-//     checkColFour();
-//     checkRowThree();
-//     checkColThree();
-//   }, 500);
+
 
   // ========== THE START PAGE ==========
 
