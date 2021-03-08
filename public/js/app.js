@@ -4,6 +4,8 @@ const colors = ["red", "green", "blue", "yellow", "purple"]; // creating an arra
 let num = 8; // the size of the grid;
 let score = 0;
 let moveCount = 10;
+let round = 1;
+let privacyScore = 500; // hidden privacy score that user cannot see
 let userName = "";
 let blank = "rgb(255, 255, 255)";
 
@@ -248,6 +250,8 @@ const checkSwapValid = () => {
         idSwap1 = null; // after the swap has been completed, reset the idSwap1.
         colorSwap1 = undefined; // reset colorSwap1 as well.
         moveCount -= 1; // decrease count every time a VALID move has been made
+        round += 1; // only increase the round IF a VALID move has been made.
+        $("#round").text(round);
         $("#moves").text(moveCount) // update the move counter with the VALID moves left.
         
     } else { // if no tile is blank, means no match has been made, then it is an invalid move, and tiles will swap back.
@@ -348,8 +352,10 @@ const restartGame = () => { // restart event click handler
     $(".tile-grid").empty();  // empty the tile grid div.
     score = 0; // reset it to zero
     moveCount = 10; // reset the move to 10.
+    round = 1;
     $("#score").text(score); // update the score.
     $("#moves").text(moveCount); // update the moves.
+    $("#round").text(round);
     createTiles(); // create tiles
     // checkAndClear(); // check and clear the board. (NOT NECESSARY NOW SINCE CHECK AND CLEAR RUNNING IN BACK)
 }
@@ -358,15 +364,7 @@ const restartGame = () => { // restart event click handler
 // ===== PLAY GAME, WHICH TAKES THE USER'S NAME. HANDLES THE FORM'S DATA
 const playGame = (e) => {
 
-    // GETTING FORM DATA
-
-    // Method 1 - Simply targeting the specific input element
-    // console.log($("#userName").val())
-
-    // Method 2- Parsing the entire form's data into an object which you can then retrieve with the 'name' attribute.
-    const formData = new FormData(e.target);
-    userName = formData.get("user-name");
-    e.preventDefault();
+   
     createBoard();
     createTiles();
     checkAndClear();    
@@ -378,12 +376,39 @@ const playGame = (e) => {
     }, 500);
 }
 
+const sendInstructions = (e) => {
+
+     // GETTING FORM DATA
+
+    // Method 1 - Simply targeting the specific input element
+    // console.log($("#userName").val())
+
+    // Method 2- Parsing the entire form's data into an object which you can then retrieve with the 'name' attribute.
+    const formData = new FormData(e.target);
+    userName = formData.get("user-name");
+    e.preventDefault();
+    $(".instructions").addClass("appear");
+    $(".play").on("click", playGame);
+
+}
+
+const endGame = () => {
+    let $endDiv = $("<div>").attr("id", "end-game-div");
+    let $h1GameOver = $("<h1>").text("Game Over!");
+    let $endPara = $("<h2>").text();
+
+    $("body").append($endDiv);
+}
+
+// const sendInstructions () => {
+//     $("<div>")
+// }
 
 // ========== MAIN jQUERY FUNCTION ==========
 $(() => {
 
     // attaching a 
-    $("form").on("submit", playGame)
+    $("form").on("submit", sendInstructions);
 
 
 
