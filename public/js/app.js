@@ -7,6 +7,10 @@ let moveCount = 10;
 let userName = "";
 let blank = "rgb(255, 255, 255)";
 
+let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background color and id for the selected tile, and the intended tile to swap with
+let validTilesSwap = []; // array storing position of valid tiles for swapping only if beside each other. ==> click event listener
+const checkColorMatch = []; //array which stores all the colors at at one time, to check if a match has been made after a click. if not, swap tile colour back.
+
 
 
 
@@ -195,17 +199,38 @@ const moveTilesDown = () => {
     }
 };
 
-// ========== ONLY ALLOWING FOR SWAP IF THE MATCH IS VALID ==========
+// ===== ONLY ALLOWING FOR SWAP IF THE MATCH IS VALID 
 
+const checkSwapValid = () => {
+    for (let i = 0; i < num**2; i++) {
+        const tileColor = $(".tile").eq(i).css("background-color");
+        checkColorMatch.push(tileColor)
+    }     
+        
+    if (checkColorMatch.includes(blank)) {
+        idSwap1 = null; // after the swap has been completed, reset the idSwap1.
+        colorSwap1 = undefined; // reset colorSwap1 as well.
+        moveCount -= 1; // decrease count everytime move has been made
+        $("#moves").text(moveCount) // update the move counter.
+        
+    } else {
+        $(".tile").eq(idSwap2).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
+        $(".tile").eq(idSwap1).css("background-color", colorSwap1);
+        
+    }
+        
+    while (checkColorMatch.includes(blank)) {
+        moveTilesDown();
+        checkColorMatch.pop();
+    }
+
+    checkColorMatch.length = 0;
+}
 
 
 // ========== EVENT LISTENERS ==========
 
 // ====== COLOUR SWAPPING FUNCTIONALITY USING CLICK AND HOVER
-let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background color and id for the selected tile, and the intended tile to swap with
-let validTilesSwap = []; // array storing position of valid tiles for swapping only if beside each other.
-const checkColorMatch = []; //array which stores all the colors at at one time, to check if a match has been made after a click. if not, tile swap back.
-
 
 const hoverSwap = (e) => {
   let tileElem = e.target; // grabbing the event object and the target, which is the div, because we are interested in the properties.
@@ -233,30 +258,9 @@ const clickSwap = (e) => {
     checkRowThree();
 
     // we want to make sure there are matches, if no matches switch back;
+    checkSwapValid();
 
-    for (let i = 0; i < num**2; i++) {
-        const tileColor = $(".tile").eq(i).css("background-color");
-        checkColorMatch.push(tileColor)
-    }     
-        
-    if (checkColorMatch.includes(blank)) {
-        idSwap1 = null; // after the swap has been completed, reset the idSwap1.
-        colorSwap1 = undefined; // reset colorSwap1 as well.
-        moveCount -= 1; // decrease count everytime move has been made
-        $("#moves").text(moveCount) // update the move counter.
-        
-    } else {
-        $(".tile").eq(idSwap2).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
-        $(".tile").eq(idSwap1).css("background-color", colorSwap1);
-        
-    }
-        
-    while (checkColorMatch.includes(blank)) {
-        moveTilesDown();
-        checkColorMatch.pop();
-    }
-
-    checkColorMatch.length = 0;
+    
     
   } else { // if there is no existing id stored in idSwap1 and color stored in colorSwap1, store upon click.
     // because this means game just started, or swap just been made.
