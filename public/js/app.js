@@ -179,51 +179,91 @@ const checkColFour = () => {
   
 
 // ========== MOVING TILES DOWNWARDS IF THERE ARE EMPTY SPACES ==========
-    
-const moveTilesDown = () => {
 
-    for (let i = 0; i< num**2; i++) {
-        const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
-        let $divTiles = $(".tile");
-        let tileColor = $divTiles.eq(i).css("background-color");
-        let tileColor1 = $divTiles.eq(i + num).css("background-color");
+const moveTilesDown = () => {
+    
+    for (let i = 0; i< num**2; i++) { // loop through all the tiles
+        const firstRow = [0, 1, 2, 3, 4, 5, 6, 7]; // defining the first row as it is the most important when 'FILLING UP'
+        let $divTiles = $(".tile"); // selecting all the tiles
+        let tileColor = $divTiles.eq(i).css("background-color"); // we are interested in a color of a tile...
+        let tileColor1 = $divTiles.eq(i + num).css("background-color"); // and the color of the tile directly below it...
         
-        if (tileColor1 === blank) {
-            $divTiles.eq(i).css("background-color", blank);
-            $divTiles.eq(i + num).css("background-color", tileColor);
+        if (tileColor1 === blank) { // if the tile directly below is blank...
+            $divTiles.eq(i).css("background-color", blank);  // make the tile above blank.
+            $divTiles.eq(i + num).css("background-color", tileColor); // give the tile below the color of the tile above!
             
         }
+
+        // if the tile is in the first row, AND it is blank, we want to generate a random colour for it from the colours array.
         if (firstRow.includes(i) && $divTiles.eq(i).css("background-color") === blank) {
             $divTiles.eq(i).css("background-color", colors[randInt()]);
         }
     }
+
 };
+
+// ========== CHECKING FOR MATCHES AND CLEARING BLANKS ==========
+
+// ===== GENERAL CHECKING FOR MATCHES AND CASCADING
+
+const checkAndClear = () => {
+    // check for matches
+    checkRowFour();
+    checkColFour();
+    checkRowThree();
+    checkColThree(); 
+
+    for (let i = 0; i < num**2; i++) { // looping through the tile colors AFTER a check for matches has been made, which will generate blank tiles if matches made.
+        const tileColor = $(".tile").eq(i).css("background-color");
+        checkColorMatch.push(tileColor) // pushing them into the checkColorMatch holder array
+    }     
+    while (checkColorMatch.includes(blank)) { // while the array contains a blank
+        moveTilesDown(); // recall that this will move tiles down AND generate new tiles
+        checkColorMatch.pop(); // remove an element so this loop will run a max of array.length times, or until there are no more blanks.
+    }
+    checkColorMatch.length = 0; // empty the array so that it can be reused again for the next clicks
+}
+
 
 // ===== ONLY ALLOWING FOR SWAP IF THE MATCH IS VALID 
 
-const checkSwapValid = () => {
-    for (let i = 0; i < num**2; i++) {
+const checkSwapValid = () => { 
+    // similar to checkAndClear but specific to the click functionality. 
+    // this is because we need to create the colours array to check for matches before allowing/disallowing a swap.
+    // we can and have reduced it to simply just a check and clear function above.
+    // NOT the best practice but will do for now.
+
+    // checking for any matches!!!
+    checkRowFour();
+    checkColFour();
+    checkRowThree();
+    checkColThree(); 
+
+    for (let i = 0; i < num**2; i++) { // looping through the tile colors AFTER a check for matches has been made.
         const tileColor = $(".tile").eq(i).css("background-color");
-        checkColorMatch.push(tileColor)
+        checkColorMatch.push(tileColor) // pushing them into the checkColorMatch holder array
     }     
         
-    if (checkColorMatch.includes(blank)) {
+    if (checkColorMatch.includes(blank)) { // if any tile is blank, means a match has been made.
         idSwap1 = null; // after the swap has been completed, reset the idSwap1.
         colorSwap1 = undefined; // reset colorSwap1 as well.
-        moveCount -= 1; // decrease count everytime move has been made
-        $("#moves").text(moveCount) // update the move counter.
+        moveCount -= 1; // decrease count every time a VALID move has been made
+        $("#moves").text(moveCount) // update the move counter with the VALID moves left.
         
-    } else {
-        $(".tile").eq(idSwap2).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
-        $(".tile").eq(idSwap1).css("background-color", colorSwap1);
+    } else { // if no tile is blank, means no match has been made, then it is an invalid move, and tiles will swap back.
+        
+        setTimeout(() => { // setTimeOut function to make the color swap back visible.
+            $(".tile").eq(idSwap2).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the color BACK
+            $(".tile").eq(idSwap1).css("background-color", colorSwap1); // using the id which is equivalent to the index, access the tile in the array and swap the color BACK
+            idSwap1 = null; // after the swap has been completed, reset the idSwap1.
+            colorSwap1 = undefined; // reset colorSwap1 as well.
+        }, 150);
         
     }
-        
-    while (checkColorMatch.includes(blank)) {
-        moveTilesDown();
+    while (checkColorMatch.includes(blank)) { // while the array with the colors of the tiles contain blanks,
+        moveTilesDown(); // got to move the tiles down.
         checkColorMatch.pop();
     }
-
     checkColorMatch.length = 0;
 }
 
@@ -232,6 +272,7 @@ const checkSwapValid = () => {
 
 // ====== COLOUR SWAPPING FUNCTIONALITY USING CLICK AND HOVER
 
+// HOVER EVENT LISTENER
 const hoverSwap = (e) => {
   let tileElem = e.target; // grabbing the event object and the target, which is the div, because we are interested in the properties.
   // console.log(tileElem) // console.log to ensure we have grabbed the correct target. the DIV node should be logged.
@@ -242,6 +283,7 @@ const hoverSwap = (e) => {
 //   console.log(idSwap2) // console.log to make sure we have grabbed the right information
 };
 
+// CLICK EVENT LISTENER
 const clickSwap = (e) => {
   // need the event object which is passed into the callback function from the event listener. can access many properties of the element through the event object.
   let tileElem = e.target; // e.target is the way to access the properties with an anonymous function.
@@ -249,19 +291,36 @@ const clickSwap = (e) => {
   let rightEdgeTiles = [7, 15, 23, 31, 39, 47, 55]; // don't want the RIGHT EDGE tiles to be able to be swapped with LEFT EDGE tile on following row
   let leftEdgeTiles = [0, 8, 16, 24, 32, 40, 48, 56]; // don't want the LEFT EDGE tiles to be able to be swapped with RIGHT EDGE tile on following row
   
+
+  // === stateMachine to determine which tiles should have the halo or not.
+  if ($(".tile").hasClass("clicked")) {
+      if ($tileElem.hasClass("clicked")) {
+        $tileElem.removeClass("clicked");
+      } else {
+          if (validTilesSwap.includes(idSwap2)) { // this refers to idSwap2 because the tile you're intending to swap to is the one you're hovering over.
+          // and it will check against the validTilesSwap array which SHOULD be filled (as a tile is already highlighted), meaning that a prior tile has been clicked before.
+              $(".tile").eq(idSwap1).removeClass("clicked");
+          } else {
+            $(".tile").eq(idSwap1).removeClass("clicked");
+            $tileElem.addClass("clicked");
+          }
+      }
+  } else {
+    $tileElem.addClass("clicked"); // also, add "clicked" class to show that the tile has been selected.
+  }
+
   if (colorSwap1 !== undefined && validTilesSwap.includes(idSwap2)) {
-    // we only want to swap the colours if there is an existing colour stored in colorSwap1(which means a prior click has been made), AND the cursor is hovering over a different tile.
+    // we only want to swap the colours if there is an existing colour stored in colorSwap1(which means a prior click has been made), AND the cursor is hovering over a different tile that is VALID.
     // console.log($(".tile").eq(idSwap2)) // check we have selected the right jQuery object.
     $(".tile").eq(idSwap2).css("background-color", colorSwap1); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
     $(".tile").eq(idSwap1).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
     
-    checkRowThree();
-
-    // we want to make sure there are matches, if no matches switch back;
-    checkSwapValid();
-
+    // we want to make sure there are matches, if no matches switch back. this is enclosed in the checkSwapValid() functionality.
+    // NOTE: this is a bit of an issue because checkSwapValid will call a few functions as well.
+    // ALSO NOTE: the checkSwapValid is NOT independent. uses globally declared values.
+    checkSwapValid(); 
     
-    
+     
   } else { // if there is no existing id stored in idSwap1 and color stored in colorSwap1, store upon click.
     // because this means game just started, or swap just been made.
     idSwap1 = parseInt($tileElem.attr("id"));
@@ -276,22 +335,23 @@ const clickSwap = (e) => {
     } else {
       validTilesSwap = [idSwap1 - num, idSwap1 - 1, idSwap1 + 1, idSwap1 + num]; // all other tiles, above, left, right, below can be swapped.
     }
-    //
+    console.log(validTilesSwap);
   }
   // console.log(colorSwap1); // make sure we have grabbed the right info
   // console.log(idSwap1); // make sure we have grabbed the right info
 };
 
 
-// ===== RESET BUTTON
+// ===== RESTART BUTTON
 
-const restartGame = () => {
-    $(".tile-grid").empty();
-    score = 0;
-    moveCount = 10;
-    $("#score").text(score);
-    $("#moves").text(moveCount);
-    createTiles();
+const restartGame = () => { // restart event click handler
+    $(".tile-grid").empty();  // empty the tile grid div.
+    score = 0; // reset it to zero
+    moveCount = 10; // reset the move to 10.
+    $("#score").text(score); // update the score.
+    $("#moves").text(moveCount); // update the moves.
+    createTiles(); // create tiles
+    // checkAndClear(); // check and clear the board. (NOT NECESSARY NOW SINCE CHECK AND CLEAR RUNNING IN BACK)
 }
 
 
@@ -309,31 +369,22 @@ const playGame = (e) => {
     e.preventDefault();
     createBoard();
     createTiles();
+    checkAndClear();    
 
     // Only when the play button is clicked, does the checking of the matches begin!!!
-//       setInterval(() => {
-//     moveTilesDown();
-//     checkRowFour();
-//     checkColFour();
-//     checkRowThree();
-//     checkColThree();
-//   }, 500);
+    setInterval(() => {
+        console.log("Hello")
+        checkAndClear();
+    }, 500);
 }
 
-
-const landingPage = () => {
-    $landingDiv = $("<div>").attr("id", "landing");
-    $img = $("<img>").attr("id", "landing-image").attr("src", "public/images/hacker.png");
-    $landingDiv.append($img);
-    $("body").append($landingDiv);
-
-}
 
 // ========== MAIN jQUERY FUNCTION ==========
 $(() => {
 
     // attaching a 
     $("form").on("submit", playGame)
+
 
 
 
