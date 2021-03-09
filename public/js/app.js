@@ -1,5 +1,3 @@
-// const $body = $("body");
-// const $tileGrid = $(".tile-grid"); // assigning the query selector for the grid to a variable since it's gonna be used a lot.
 const colors = ["red", "green", "blue", "yellow", "purple"]; // creating an array of colours so we can assign random colours to the tile divs in the HTML.
 const questions = ["Please provide your address for more moves! 🏠", "Please provide your age for more moves! 📇", "Please provide your gender for more moves! 🏳️‍🌈", "Please provide your browsing history for more moves! 🔎", "Please provide the names of your family members for more moves! 👩‍👩‍👧"];
 let num = 8; // the size of the grid;
@@ -7,6 +5,7 @@ let score = 0;
 let moveCount = 10;
 let round = 1;
 let privacyScore = 500; // hidden privacy score that user cannot see
+let difficulty = 0;
 let userName = "";
 let blank = "rgb(255, 255, 255)";
 
@@ -23,33 +22,33 @@ const createBoard = () => {
     $("body").empty();
     // the round text div
     $h1Round = $("<h1>").text("Round")
-    $h2Round = $("<h2>").attr("id", "round").text("1");
+    $h2Round = $("<h2>").attr("id", "round").text(round); // changed the magic text to reflect the variables instead.
     $divRound = $("<div>").attr("id", "round-div");
     $divRound.append($h1Round).append($h2Round);
     
     // score text div
     $h1Score = $("<h1>").text("Score")
-    $h2Score = $("<h2>").attr("id", "score").text("0");
+    $h2Score = $("<h2>").attr("id", "score").text(score); // changed the magic text to reflect the variables instead.
     $divScore = $("<div>").attr("id", "score-div");
     $divScore.append($h1Score).append($h2Score);
 
     // moves left div
     $h1Moves = $("<h1>").text("Moves")
-    $h2Moves = $("<h2>").attr("id", "moves").text("10");
+    $h2Moves = $("<h2>").attr("id", "moves").text(moveCount); // changed the magic text to reflect the variables instead.
     $divMoves = $("<div>").attr("id", "moves-div");
     $divMoves.append($h1Moves).append($h2Moves);
 
     // tile grid div
     $divGrid = $("<div>").attr("class", "tile-grid");
 
-    // button div
+    // BUTTON DIV WITH BUTTONS
+    // restart button
     $restartButton = $("<button>").text("Restart?").attr("id", "restart").attr("class", "btn btn-primary")
     $restartButton.on("click", restartGame);
 
+    // difficulty button
     $diffButton = $("<button>").text("Too Easy?").attr("id", "difficulty").attr("class", "btn btn-warning")
-    $diffButton.on("click", () => {
-      console.log("Hello!");
-    })
+    $diffButton.on("click", increaseDifficulty)
 
     $buttonDiv = $("<div>").attr("id", "button-div");
     $buttonDiv.append($restartButton).append($diffButton);
@@ -266,7 +265,7 @@ const checkSwapValid = () => {
         $("#round").text(round);
         $("#moves").text(moveCount) // update the move counter with the VALID moves left.
 
-        if (moveCount <= 0) { // if out of moves, END GAME!!
+        if (moveCount <= 0) { // if out of moves, ===> END GAME!!
             pauseGame();
         }
 
@@ -291,7 +290,7 @@ const checkSwapValid = () => {
 
 // ========== EVENT LISTENERS ==========
 
-// ====== COLOUR SWAPPING FUNCTIONALITY USING CLICK AND HOVER
+// ===== COLOUR SWAPPING FUNCTIONALITY USING CLICK AND HOVER
 
 // STATE MACHINE TO DEAL WITH THE TILE SELECTION HIGHLIGHT
 
@@ -334,7 +333,7 @@ const clickSwap = (e) => {
   let rightEdgeTiles = [7, 15, 23, 31, 39, 47, 55]; // don't want the RIGHT EDGE tiles to be able to be swapped with LEFT EDGE tile on following row
   let leftEdgeTiles = [0, 8, 16, 24, 32, 40, 48, 56]; // don't want the LEFT EDGE tiles to be able to be swapped with RIGHT EDGE tile on following row
   
-  // === stateMachine to determine which tiles should have the halo or not.
+  // stateMachine to determine which tiles should have the halo or not.
   tileHighlight($tileElem);
 
   if (colorSwap1 !== undefined && validTilesSwap.includes(idSwap2)) {
@@ -373,58 +372,62 @@ const clickSwap = (e) => {
 // ===== RESTART BUTTON
 
 const restartGame = () => { // restart event click handler
-    createBoard();  // empty the tile grid div. used to be $(".tile-grid").empty but changed so restart will clear pop-up.
-    score = 0; // reset it to zero
-    moveCount = 10; // reset the move to 10.
-    round = 1;
-    privacyScore = 500;
+    createBoard();  // empty the tile grid div. used to be $(".tile-grid").empty but changed so restart will clear endgame pop-up.
+    colors.splice(5, difficulty + 1);
+    score = 0; // reset score to zero
+    moveCount = 10; // reset the moveCount to 10.
+    round = 1; // reset round to 1
+    privacyScore = 500; // reset the privacyScore to 500.
+    difficulty = 0;
     $("#score").text(score); // update the score.
     $("#moves").text(moveCount); // update the moves.
-    $("#round").text(round);
+    $("#round").text(round); // update the number of rounds.
     createTiles(); // create tiles
     // checkAndClear(); // check and clear the board. (NOT NECESSARY NOW SINCE CHECK AND CLEAR RUNNING IN BACK)
 }
 
 
-// ===== PLAY GAME
+// ========== STARTING THE GAME ==========
 const playGame = (e) => {
-
     createBoard();
     createTiles();
     checkAndClear();    
     // Only when the play button is clicked, does the checking of the matches begin!!!
     setInterval(() => {
-        // console.log("Hello");
-        checkAndClear();
+        checkAndClear(); 
     }, 500);
 }
 
 // ===== SEND INSTRUCTIONS, WHICH WILL SHOW THE INSTRUCTIONS FOR THE USER UPON CLICK! HANDLES THE FORM'S DATA AS WELL.
 const sendInstructions = (e) => {
-     // GETTING FORM DATA
-
+     
+  // GETTING FORM DATA
     // Method 1 - Simply targeting the specific input element
     // console.log($("#userName").val())
-    // Method 2- Parsing the entire form's data into an object which you can then retrieve with the 'name' attribute.
+  
+    // Method 2- Parsing the entire form's data into an object which you can then flexibly retrieve with the 'name' attribute.
     const formData = new FormData(e.target);
-    userName = formData.get("user-name");
-    e.preventDefault();
+    userName = formData.get("user-name"); // the data of the input whic you're interested in MUST have the 'name' attribute.
+    e.preventDefault(); // prevent the default refresh behaviour of a form or submit button when submitted.
     $(".instructions").addClass("appear");
     $(".play").on("click", playGame);
 
 }
 
-// ===== ENDS THE GAME WHEN THE NUMBER OF MOVES HIT ZERO
+// ========== PAUSES/ENDS THE GAME WHEN THE NUMBER OF MOVES HIT ZERO ==========
 const pauseGame = () => {
+
+    // creating the div to hold the title, text, and buttons.
     let $endDiv = $("<div>").addClass("end-game"); //create a div to hold the information of the end-game text and options
-    let $h1GameOver = $("<h1>").text(`Oh dear, out of moves ${userName}`); // with the userName entered and captured by the game, we will reflect it back
+    let $h1GameOver = $("<h1>").text(`Oh no, you're out of moves ${userName}!`); // with the userName entered and captured by the game, we will reflect it back
     let $pGameOver = $("<p>").text(questions[Math.floor(Math.random() * questions.length)]); // the questions will be randomly selected from the question array
     $endDiv.append($h1GameOver).append($pGameOver); // append both the h1 and the paragraph element to the div.
 
+    // create the button div, with two buttons.
     let $buttonDiv = $("<div>").addClass("d-grid gap-2 col-6 mx-auto") // create the button div for the Bootstrap buttons
     let $buttonYes = $("<button>").addClass("yes btn btn-success").attr("type", "button").text("HELL YEAH!"); // Bootstrap success button
     $buttonYes.on("click", continueGame);
-    let $buttonNo = $("<button>").addClass("no btn btn-outline-danger").attr("type", "button").text("NO... END GAME FOR ME..."); // Bootstrap danger button
+    let $buttonNo = $("<button>").addClass("no btn btn-outline-danger").attr("type", "button").text("NOPE... END THE GAME FOR ME..."); // Bootstrap danger button
     $buttonNo.on("click", endGame);
     $buttonDiv.append($buttonYes).append($buttonNo); // append the buttons on the button div
 
@@ -432,41 +435,40 @@ const pauseGame = () => {
     $("body").append($endDiv);
 }
 
+// ===== CONTINUE GAME WITH MORE MOVES IF USER INDICATES YES.
 const continueGame = () => {
-  moveCount = 3;
-  $("#moves").text(moveCount);
+  moveCount = 3; // only need to reset the moveCount to 3 if the player wants to continue with the game.
+  $("#moves").text(moveCount); 
   $(".end-game").remove();
 }
 
-
+// ====== END GAME WITH REVEAL OF SCORE IF USER INDICATES NO.
 const endGame = () => {
-  $(".end-game h1").text(`Game Over ${userName}!`);
-  $(".end-game p").text(`While you were having fun and matching tiles, 
+  // using existing h1 and p elements in the div to display information.
+  $(".end-game h1").text(`Game Over ${userName}!`); 
+  $(".end-game p").html(`While you were having fun and matching tiles, 
   we were matching information on you as well. 🕵️‍♂️
   The more matches you made, the more information 
-  was tied to you. As a result, your privacy score was impacted! 
-  Your final result: Game Score: ${score}. Privacy Score: ${privacyScore}.`)
+  was linked to you. As a result, your Privacy Score was impacted! 
+  Your final result: <strong>Game Score: ${score}. Privacy Score: ${privacyScore}</strong>.`)
 }
-// const sendInstructions () => {
-//     $("<div>")
-// }
+
+const increaseDifficulty = () => {
+  const additionalColors = ["pink", "grey", "turquoise"]; // array holding more colours to push into the colors array.
+  colors.push(additionalColors[difficulty]); // 
+  difficulty += 1; // increase difficulty count which will allow to 'cycle' through the additional colors array.
+  createBoard(); 
+  createTiles();
+}
 
 // ========== MAIN jQUERY FUNCTION ==========
 $(() => {
 
-    // attaching a 
+    // since HTML page loads immediately, attach the sendInstructions event listener to the form which will kickstart the process.
     $("form").on("submit", sendInstructions);
 
 
 
-
-
-
-  // ========== THE START PAGE ==========
-
-  // $body.empty();
-  // $landingDiv = $("<div>").attr("id", "landing");
-  // $body.append($landingDiv);
 
 
 }); // end of jQuery onready function.
