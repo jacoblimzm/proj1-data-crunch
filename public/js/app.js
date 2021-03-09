@@ -1,7 +1,7 @@
 // const $body = $("body");
 // const $tileGrid = $(".tile-grid"); // assigning the query selector for the grid to a variable since it's gonna be used a lot.
 const colors = ["red", "green", "blue", "yellow", "purple"]; // creating an array of colours so we can assign random colours to the tile divs in the HTML.
-const questions = ["Please provide your address for more rounds!", "Please provide your age for more rounds!", "Please provide your gender for more rounds!", "Please provide your browsing history for more rounds!", "Please provide the names of your family members for more rounds!"];
+const questions = ["Please provide your address for more moves!", "Please provide your age for more moves!", "Please provide your gender for more moves!", "Please provide your browsing history for more moves!", "Please provide the names of your family members for more moves!"];
 let num = 8; // the size of the grid;
 let score = 0;
 let moveCount = 10;
@@ -91,6 +91,7 @@ const createTiles = () => {
           if (tileColor === tileColor1 && tileColor1 === tileColor2) {
             if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
                 score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS to prevent adding of score when there are blanks being filled in.
+                privacyScore -= 3;
                 $("#score").text(score);
             }
             $divTiles.eq(i).css("background-color", blank);
@@ -119,6 +120,7 @@ const checkRowFour = () => { // loop through all the tiles in the grid
         if (tileColor === tileColor1 && tileColor1 === tileColor2 && tileColor2 === tileColor3) {
             if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
                 score += 4; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS
+                privacyScore -= 4;
                 $("#score").text(score);
             }
           $divTiles.eq(i).css("background-color", blank);
@@ -145,6 +147,7 @@ const checkColThree = () => {
           if (tileColor === tileColor1 && tileColor1 === tileColor2) {
             if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
                 score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS
+                privacyScore -= 3;
                 $("#score").text(score);
             }
             $divTiles.eq(i).css("background-color", blank);
@@ -170,6 +173,7 @@ const checkColFour = () => {
         if (tileColor === tileColor1 && tileColor1 === tileColor2 && tileColor2 === tileColor3) {
             if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
                 score += 4; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS
+                privacyScore -= 4;
                 $("#score").text(score);
             }
           $divTiles.eq(i).css("background-color", blank);
@@ -251,13 +255,13 @@ const checkSwapValid = () => {
         idSwap1 = null; // after the swap has been completed, reset the idSwap1.
         colorSwap1 = undefined; // reset colorSwap1 as well.
 
-        if (moveCount <= 0) {
-            endGame();
-        } else {
-            moveCount -= 1; // decrease count every time a VALID move has been made
-            round += 1; // only increase the round IF a VALID move has been made.
-            $("#round").text(round);
-            $("#moves").text(moveCount) // update the move counter with the VALID moves left.
+        moveCount -= 1; // decrease count every time a VALID move has been made
+        round += 1; // only increase the round IF a VALID move has been made.
+        $("#round").text(round);
+        $("#moves").text(moveCount) // update the move counter with the VALID moves left.
+
+        if (moveCount <= 0) { // if out of moves, END GAME!!
+            pauseGame();
         }
 
         
@@ -363,10 +367,11 @@ const clickSwap = (e) => {
 // ===== RESTART BUTTON
 
 const restartGame = () => { // restart event click handler
-    $(".tile-grid").empty();  // empty the tile grid div.
+    createBoard();  // empty the tile grid div. used to be $(".tile-grid").empty but changed so restart will clear pop-up.
     score = 0; // reset it to zero
     moveCount = 10; // reset the move to 10.
     round = 1;
+    privacyScore = 500;
     $("#score").text(score); // update the score.
     $("#moves").text(moveCount); // update the moves.
     $("#round").text(round);
@@ -375,7 +380,7 @@ const restartGame = () => { // restart event click handler
 }
 
 
-// ===== PLAY GAME, WHICH TAKES THE USER'S NAME. HANDLES THE FORM'S DATA
+// ===== PLAY GAME, WHICH TAKES THE USER'S NAME.
 const playGame = (e) => {
 
     createBoard();
@@ -388,9 +393,8 @@ const playGame = (e) => {
     }, 500);
 }
 
-// ===== SEND INSTRUCTIONS, WHICH WILL SHOW THE INSTRUCTIONS FOR THE USER UPON CLICK!
+// ===== SEND INSTRUCTIONS, WHICH WILL SHOW THE INSTRUCTIONS FOR THE USER UPON CLICK! HANDLES THE FORM'S DATA AS WELL.
 const sendInstructions = (e) => {
-
      // GETTING FORM DATA
 
     // Method 1 - Simply targeting the specific input element
@@ -404,19 +408,28 @@ const sendInstructions = (e) => {
 
 }
 
-const endGame = () => {
-    let $endDiv = $("<div>").addClass("end-game");
-    let $h1GameOver = $("<h1>").text(`Oh dear, out of moves ${userName}`);
-    let $pGameOver = $("<p>").text(questions[randInt()]);
-    $endDiv.append($h1GameOver).append($pGameOver);
+// ===== ENDS THE GAME WHEN THE NUMBER OF MOVES HIT ZERO
+const pauseGame = () => {
+    let $endDiv = $("<div>").addClass("end-game"); //create a div to hold the information of the end-game text and options
+    let $h1GameOver = $("<h1>").text(`Oh dear, out of moves ${userName}`); // with the userName entered and captured by the game, we will reflect it back
+    let $pGameOver = $("<p>").text(questions[randInt()]); // the questions will be randomly selected from the question array
+    $endDiv.append($h1GameOver).append($pGameOver); // append both the h1 and the paragraph element to the div.
 
-    let $buttonDiv = $("<div>").addClass("d-grid gap-2 col-6 mx-auto")
-    let $buttonYes = $("<button>").addClass("yes btn btn-success").attr("type", "button").text("HELL YEA");
-    let $buttonNo = $("<button>").addClass("yes btn btn-outline-danger").attr("type", "button").text("NO...");
-    $buttonDiv.append($buttonYes).append($buttonNo);
+    let $buttonDiv = $("<div>").addClass("d-grid gap-2 col-6 mx-auto") // create the button div for the Bootstrap buttons
+    let $buttonYes = $("<button>").addClass("yes btn btn-success").attr("type", "button").text("HELL YEA"); // Bootstrap success button
+    $buttonYes.on("click", continueGame);
+    let $buttonNo = $("<button>").addClass("no btn btn-outline-danger").attr("type", "button").text("NO..."); // Bootstrap danger button
+    
+    $buttonDiv.append($buttonYes).append($buttonNo); // append the buttons on the button div
 
-    $endDiv.append($buttonDiv);
+    $endDiv.append($buttonDiv); 
     $("body").append($endDiv);
+}
+
+const continueGame = () => {
+  moveCount = 3;
+  $("#moves").text(moveCount);
+  $(".end-game").remove();
 }
 
 // const sendInstructions () => {
