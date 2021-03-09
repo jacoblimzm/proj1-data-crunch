@@ -113,5 +113,10 @@ p {
 #restart {
     position: absolute;
     top: 45%;
-    right: 45%;
+    
+}
+
+#difficulty {
+    position: absolute;
+    
 }

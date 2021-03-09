@@ -43,12 +43,18 @@ const createBoard = () => {
     $divGrid = $("<div>").attr("class", "tile-grid");
 
     // button div
-    $button = $("<button>").text("Restart?").attr('id', "restart").attr("class", "btn btn-primary")
-    $button.on("click", restartGame);
-    $divButton = $("<div>").attr("id", "button-div");
-    $divButton.append($button);
+    $restartButton = $("<button>").text("Restart?").attr("id", "restart").attr("class", "btn btn-primary")
+    $restartButton.on("click", restartGame);
+
+    $diffButton = $("<button>").text("Too Easy?").attr("id", "difficulty").attr("class", "btn btn-warning")
+    $diffButton.on("click", () => {
+      console.log("Hello!");
+    })
+
+    $buttonDiv = $("<div>").attr("id", "button-div");
+    $buttonDiv.append($restartButton).append($diffButton);
     
-    $("body").append($divRound).append($divScore).append($divMoves).append($divGrid).append($divButton);
+    $("body").append($divRound).append($divScore).append($divMoves).append($divGrid).append($buttonDiv);
 
 }
 
@@ -279,7 +285,7 @@ const checkSwapValid = () => {
         moveTilesDown(); // got to move the tiles down.
         checkColorMatch.pop();
     }
-    checkColorMatch.length = 0;
+    checkColorMatch.length = 0; // when there are no more blank tiles, the array will still have some colours inside. so clear the array.
 }
 
 
@@ -380,7 +386,7 @@ const restartGame = () => { // restart event click handler
 }
 
 
-// ===== PLAY GAME, WHICH TAKES THE USER'S NAME.
+// ===== PLAY GAME
 const playGame = (e) => {
 
     createBoard();
@@ -412,13 +418,13 @@ const sendInstructions = (e) => {
 const pauseGame = () => {
     let $endDiv = $("<div>").addClass("end-game"); //create a div to hold the information of the end-game text and options
     let $h1GameOver = $("<h1>").text(`Oh dear, out of moves ${userName}`); // with the userName entered and captured by the game, we will reflect it back
-    let $pGameOver = $("<p>").text(questions[randInt()]); // the questions will be randomly selected from the question array
+    let $pGameOver = $("<p>").text(questions[Math.floor(Math.random() * questions.length)]); // the questions will be randomly selected from the question array
     $endDiv.append($h1GameOver).append($pGameOver); // append both the h1 and the paragraph element to the div.
 
     let $buttonDiv = $("<div>").addClass("d-grid gap-2 col-6 mx-auto") // create the button div for the Bootstrap buttons
-    let $buttonYes = $("<button>").addClass("yes btn btn-success").attr("type", "button").text("HELL YEA"); // Bootstrap success button
+    let $buttonYes = $("<button>").addClass("yes btn btn-success").attr("type", "button").text("HELL YEAH!"); // Bootstrap success button
     $buttonYes.on("click", continueGame);
-    let $buttonNo = $("<button>").addClass("no btn btn-outline-danger").attr("type", "button").text("NO..."); // Bootstrap danger button
+    let $buttonNo = $("<button>").addClass("no btn btn-outline-danger").attr("type", "button").text("NO... END GAME FOR ME..."); // Bootstrap danger button
     $buttonNo.on("click", endGame);
     $buttonDiv.append($buttonYes).append($buttonNo); // append the buttons on the button div
 
