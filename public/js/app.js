@@ -1,7 +1,7 @@
 // const $body = $("body");
 // const $tileGrid = $(".tile-grid"); // assigning the query selector for the grid to a variable since it's gonna be used a lot.
 const colors = ["red", "green", "blue", "yellow", "purple"]; // creating an array of colours so we can assign random colours to the tile divs in the HTML.
-const questions = ["Please provide your address for more moves!", "Please provide your age for more moves!", "Please provide your gender for more moves!", "Please provide your browsing history for more moves!", "Please provide the names of your family members for more moves!"];
+const questions = ["Please provide your address for more moves! 🏠", "Please provide your age for more moves! 📇", "Please provide your gender for more moves! 🏳️‍🌈", "Please provide your browsing history for more moves! 🔎", "Please provide the names of your family members for more moves! 👩‍👩‍👧"];
 let num = 8; // the size of the grid;
 let score = 0;
 let moveCount = 10;
@@ -419,7 +419,7 @@ const pauseGame = () => {
     let $buttonYes = $("<button>").addClass("yes btn btn-success").attr("type", "button").text("HELL YEA"); // Bootstrap success button
     $buttonYes.on("click", continueGame);
     let $buttonNo = $("<button>").addClass("no btn btn-outline-danger").attr("type", "button").text("NO..."); // Bootstrap danger button
-    
+    $buttonNo.on("click", endGame);
     $buttonDiv.append($buttonYes).append($buttonNo); // append the buttons on the button div
 
     $endDiv.append($buttonDiv); 
@@ -432,6 +432,15 @@ const continueGame = () => {
   $(".end-game").remove();
 }
 
+
+const endGame = () => {
+  $(".end-game h1").text(`Game Over ${userName}!`);
+  $(".end-game p").text(`While you were having fun and matching tiles, 
+  we were matching information on you as well. 🕵️‍♂️
+  The more matches you made, the more information 
+  was tied to you. As a result, your privacy score was impacted! 
+  Your final result: Game Score: ${score}. Privacy Score: ${privacyScore}.`)
+}
 // const sendInstructions () => {
 //     $("<div>")
 // }
