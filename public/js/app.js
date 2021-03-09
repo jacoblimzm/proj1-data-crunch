@@ -1,6 +1,7 @@
 // const $body = $("body");
 // const $tileGrid = $(".tile-grid"); // assigning the query selector for the grid to a variable since it's gonna be used a lot.
 const colors = ["red", "green", "blue", "yellow", "purple"]; // creating an array of colours so we can assign random colours to the tile divs in the HTML.
+const questions = ["Please provide your address for more rounds!", "Please provide your age for more rounds!", "Please provide your gender for more rounds!", "Please provide your browsing history for more rounds!", "Please provide the names of your family members for more rounds!"];
 let num = 8; // the size of the grid;
 let score = 0;
 let moveCount = 10;
@@ -249,10 +250,16 @@ const checkSwapValid = () => {
     if (checkColorMatch.includes(blank)) { // if any tile is blank, means a match has been made.
         idSwap1 = null; // after the swap has been completed, reset the idSwap1.
         colorSwap1 = undefined; // reset colorSwap1 as well.
-        moveCount -= 1; // decrease count every time a VALID move has been made
-        round += 1; // only increase the round IF a VALID move has been made.
-        $("#round").text(round);
-        $("#moves").text(moveCount) // update the move counter with the VALID moves left.
+
+        if (moveCount <= 0) {
+            endGame();
+        } else {
+            moveCount -= 1; // decrease count every time a VALID move has been made
+            round += 1; // only increase the round IF a VALID move has been made.
+            $("#round").text(round);
+            $("#moves").text(moveCount) // update the move counter with the VALID moves left.
+        }
+
         
     } else { // if no tile is blank, means no match has been made, then it is an invalid move, and tiles will swap back.
         
@@ -276,6 +283,28 @@ const checkSwapValid = () => {
 
 // ====== COLOUR SWAPPING FUNCTIONALITY USING CLICK AND HOVER
 
+// STATE MACHINE TO DEAL WITH THE TILE SELECTION HIGHLIGHT
+
+const tileHighlight = ($nodeObj) => {
+    if ($(".tile").hasClass("clicked")) {
+        if ($nodeObj.hasClass("clicked")) {
+          $nodeObj.removeClass("clicked");
+        } else {
+            if (validTilesSwap.includes(idSwap2)) { // this refers to idSwap2 because the tile you're intending to swap to is the one you're hovering over.
+            // and it will check against the validTilesSwap array which SHOULD be filled (as a tile is already highlighted), meaning that a prior tile has been clicked before.
+                $(".tile").eq(idSwap1).removeClass("clicked");
+            } else {
+              $(".tile").eq(idSwap1).removeClass("clicked");
+              $nodeObj.addClass("clicked");
+            }
+        }
+    } else {
+      $nodeObj.addClass("clicked"); // also, add "clicked" class to show that the tile has been selected.
+    }
+    
+}
+
+
 // HOVER EVENT LISTENER
 const hoverSwap = (e) => {
   let tileElem = e.target; // grabbing the event object and the target, which is the div, because we are interested in the properties.
@@ -295,23 +324,8 @@ const clickSwap = (e) => {
   let rightEdgeTiles = [7, 15, 23, 31, 39, 47, 55]; // don't want the RIGHT EDGE tiles to be able to be swapped with LEFT EDGE tile on following row
   let leftEdgeTiles = [0, 8, 16, 24, 32, 40, 48, 56]; // don't want the LEFT EDGE tiles to be able to be swapped with RIGHT EDGE tile on following row
   
-
   // === stateMachine to determine which tiles should have the halo or not.
-  if ($(".tile").hasClass("clicked")) {
-      if ($tileElem.hasClass("clicked")) {
-        $tileElem.removeClass("clicked");
-      } else {
-          if (validTilesSwap.includes(idSwap2)) { // this refers to idSwap2 because the tile you're intending to swap to is the one you're hovering over.
-          // and it will check against the validTilesSwap array which SHOULD be filled (as a tile is already highlighted), meaning that a prior tile has been clicked before.
-              $(".tile").eq(idSwap1).removeClass("clicked");
-          } else {
-            $(".tile").eq(idSwap1).removeClass("clicked");
-            $tileElem.addClass("clicked");
-          }
-      }
-  } else {
-    $tileElem.addClass("clicked"); // also, add "clicked" class to show that the tile has been selected.
-  }
+  tileHighlight($tileElem);
 
   if (colorSwap1 !== undefined && validTilesSwap.includes(idSwap2)) {
     // we only want to swap the colours if there is an existing colour stored in colorSwap1(which means a prior click has been made), AND the cursor is hovering over a different tile that is VALID.
@@ -364,25 +378,23 @@ const restartGame = () => { // restart event click handler
 // ===== PLAY GAME, WHICH TAKES THE USER'S NAME. HANDLES THE FORM'S DATA
 const playGame = (e) => {
 
-   
     createBoard();
     createTiles();
     checkAndClear();    
-
     // Only when the play button is clicked, does the checking of the matches begin!!!
     setInterval(() => {
-        console.log("Hello")
+        // console.log("Hello");
         checkAndClear();
     }, 500);
 }
 
+// ===== SEND INSTRUCTIONS, WHICH WILL SHOW THE INSTRUCTIONS FOR THE USER UPON CLICK!
 const sendInstructions = (e) => {
 
      // GETTING FORM DATA
 
     // Method 1 - Simply targeting the specific input element
     // console.log($("#userName").val())
-
     // Method 2- Parsing the entire form's data into an object which you can then retrieve with the 'name' attribute.
     const formData = new FormData(e.target);
     userName = formData.get("user-name");
@@ -393,10 +405,17 @@ const sendInstructions = (e) => {
 }
 
 const endGame = () => {
-    let $endDiv = $("<div>").attr("id", "end-game-div");
-    let $h1GameOver = $("<h1>").text("Game Over!");
-    let $endPara = $("<h2>").text();
+    let $endDiv = $("<div>").addClass("end-game");
+    let $h1GameOver = $("<h1>").text(`Oh dear, out of moves ${userName}`);
+    let $pGameOver = $("<p>").text(questions[randInt()]);
+    $endDiv.append($h1GameOver).append($pGameOver);
 
+    let $buttonDiv = $("<div>").addClass("d-grid gap-2 col-6 mx-auto")
+    let $buttonYes = $("<button>").addClass("yes btn btn-success").attr("type", "button").text("HELL YEA");
+    let $buttonNo = $("<button>").addClass("yes btn btn-outline-danger").attr("type", "button").text("NO...");
+    $buttonDiv.append($buttonYes).append($buttonNo);
+
+    $endDiv.append($buttonDiv);
     $("body").append($endDiv);
 }
 

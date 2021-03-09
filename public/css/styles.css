@@ -60,6 +60,15 @@ p {
     background-color: white;
     border: solid black 1px;
     display: none;
+    border-radius: 1rem;
+}
+
+.end-game {
+    margin-top: 50px;
+    grid-area: 1/2/3/5;
+    background-color: white;
+    border: solid black 1px;
+    border-radius: 1rem;
 }
 
 .appear {
