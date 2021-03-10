@@ -15,7 +15,6 @@ const checkColorMatch = []; //array which stores all the colors at at one time, 
 
 
 
-
 // ========== FUNCTIONS FOR CREATING THE BOARD ==========
 
 const createBoard = () => {
@@ -79,30 +78,60 @@ const createTiles = () => {
 };
 
   /// ========== CHECKING FOR MATCHES ==========
+
+  const createInvalidTilesArray = (size, match) => {
+    let hold = [];
+    let invalidTile = [];
+    for (let i = 0; i < size; i++) { // so "8" can be replaced by however large the grid is. in this case 8x8.
+      hold.push([...Array(size).keys()]); // push an array of length 8, starting from 0 into a holding array.
+      hold[i] = hold[i].map(x => x + (size * i)) // add on the array based on which "row" it is in. i = 0 => row 1, i = 1 => row 2....
+    }
+  
+    for (let i = 0; i < size; i++) {
+      hold[i] = hold[i].filter(x => x > size * (i + 1) - match) // filter out the invalid tiles, which are always more than (size * row) - match: i + 1 because i = 0. match is the number of tiles in a row.
+      invalidTile.push(...hold[i])
+    }
+    return invalidTile
+  }
+
   // ====== CHECK FOR 3 IN A ROW MATCHES
 
-  const checkRowThree = () => {
+  const checkRow = () => {
     for (let i = 0; i < num ** 2; i++) { // loop through all the tiles in the grid
         // we don't want the matching to cross over, hence need an array of the invalidTiles, which restrict the matching.
-        let invalidTiles = [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55]; 
+        let invalidTiles = createInvalidTilesArray(num, 3);
         let $divTiles = $(".tile"); // selection of all the tiles
+        let rowOfThree = [...Array(3).keys()]; // automatically an array 3 elements wrong and fill it sequentially from 0.
+        
         if (!invalidTiles.includes(i)) { // check to make sure the current tile is valid
             // save the colours of the three tiles.
-          let tileColor = $divTiles.eq(i).css("background-color");
-          let tileColor1 = $divTiles.eq(i + 1).css("background-color");
-          let tileColor2 = $divTiles.eq(i + 2).css("background-color");
+          let firstTileColor = $divTiles.eq(i).css("background-color");
+          let isBlank = $divTiles.eq(i).css("background-color") === blank;
+          // let tileColor1 = $divTiles.eq(i + 1).css("background-color");
+          // let tileColor2 = $divTiles.eq(i + 2).css("background-color");
 
           // if the tiles are all the same colur, make them all blank!
-          if (tileColor === tileColor1 && tileColor1 === tileColor2) {
-            if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
-                score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS to prevent adding of score when there are blanks being filled in.
-                privacyScore -= 3;
-                $("#score").text(score);
-            }
-            $divTiles.eq(i).css("background-color", blank);
-            $divTiles.eq(i + 1).css("background-color", blank);
-            $divTiles.eq(i + 2).css("background-color", blank);
+          let isEveryTileSame = rowOfThree.every( index => 
+            $divTiles.eq(index + i).css("background-color") === firstTileColor);
+          
+            
+          if (isEveryTileSame && !isBlank) {
+              score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS to prevent adding of score when there are blanks being filled in.
+              privacyScore -= 3;
+              $("#score").text(score);
+              rowOfThree.forEach( index => $divTiles.eq(index + i).css("background-color", blank));
           }
+
+          // if (tileColor === tileColor1 && tileColor1 === tileColor2) {
+          //   if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
+          //       score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS to prevent adding of score when there are blanks being filled in.
+          //       privacyScore -= 3;
+          //       $("#score").text(score);
+          //   }
+          //   $divTiles.eq(i).css("background-color", blank);
+          //   $divTiles.eq(i + 1).css("background-color", blank);
+          //   $divTiles.eq(i + 2).css("background-color", blank);
+          // }
         }
       }      
   }
@@ -251,12 +280,15 @@ const checkSwapValid = () => {
     checkRowThree();
     checkColThree(); 
 
+    // Block1
     for (let i = 0; i < num**2; i++) { // looping through the tile colors AFTER a check for matches has been made.
         const tileColor = $(".tile").eq(i).css("background-color");
         checkColorMatch.push(tileColor) // pushing them into the checkColorMatch holder array
     }     
-        
-    if (checkColorMatch.includes(blank)) { // if any tile is blank, means a match has been made.
+    
+    // Block2
+    const isMatchMade = checkColorMatch.includes(blank);
+    if (isMatchMade) { // if any tile is blank, means a match has been made.
         idSwap1 = null; // after the swap has been completed, reset the idSwap1.
         colorSwap1 = undefined; // reset colorSwap1 as well.
 
@@ -268,8 +300,6 @@ const checkSwapValid = () => {
         if (moveCount <= 0) { // if out of moves, ===> END GAME!!
             pauseGame();
         }
-
-        
     } else { // if no tile is blank, means no match has been made, then it is an invalid move, and tiles will swap back.
         
         setTimeout(() => { // setTimeOut function to make the color swap back visible.
@@ -280,6 +310,8 @@ const checkSwapValid = () => {
         }, 150);
         
     }
+
+    // Block3
     while (checkColorMatch.includes(blank)) { // while the array with the colors of the tiles contain blanks,
         moveTilesDown(); // got to move the tiles down.
         checkColorMatch.pop();
@@ -295,20 +327,21 @@ const checkSwapValid = () => {
 // STATE MACHINE TO DEAL WITH THE TILE SELECTION HIGHLIGHT
 
 const tileHighlight = ($nodeObj) => {
-    if ($(".tile").hasClass("clicked")) {
-        if ($nodeObj.hasClass("clicked")) {
-          $nodeObj.removeClass("clicked");
-        } else {
+    if ($(".tile").hasClass("clicked")) { // check if ANY of the tiles has been clicked prior,
+        if ($nodeObj.hasClass("clicked")) { // check if the prior clicked tile is the one currently about to be clicked
+          $nodeObj.removeClass("clicked"); // if YES, remove the class.
+        } else { // if NOT, need to check if the tile about to be clicked is in a valid position. the validTilesSwap array will contain that information if a prior tile has been clicked before.
             if (validTilesSwap.includes(idSwap2)) { // this refers to idSwap2 because the tile you're intending to swap to is the one you're hovering over.
-            // and it will check against the validTilesSwap array which SHOULD be filled (as a tile is already highlighted), meaning that a prior tile has been clicked before.
+                // if it is a valid move, great, remove the highlight from the previously clicked tile.
                 $(".tile").eq(idSwap1).removeClass("clicked");
             } else {
+              // if not a valid move, remove highlight from previously clicked tile and add highlight to the current clicked tile
               $(".tile").eq(idSwap1).removeClass("clicked");
               $nodeObj.addClass("clicked");
             }
         }
-    } else {
-      $nodeObj.addClass("clicked"); // also, add "clicked" class to show that the tile has been selected.
+    } else { 
+      $nodeObj.addClass("clicked"); // if no tiles clicked prior, add the highlight to the current tile being clicked.
     }
     
 }
@@ -373,7 +406,7 @@ const clickSwap = (e) => {
 
 const restartGame = () => { // restart event click handler
     createBoard();  // empty the tile grid div. used to be $(".tile-grid").empty but changed so restart will clear endgame pop-up.
-    colors.splice(5, difficulty + 1);
+    colors.splice(5, difficulty + 1); // we have to reset the colors array to the original set, which has 5 colors (ends at index 4), we want to remove (difficulty+1) elements because difficulty starts from 0;
     score = 0; // reset score to zero
     moveCount = 10; // reset the moveCount to 10.
     round = 1; // reset round to 1
@@ -388,7 +421,7 @@ const restartGame = () => { // restart event click handler
 
 
 // ========== STARTING THE GAME ==========
-const playGame = (e) => {
+const playGame = () => {
     createBoard();
     createTiles();
     checkAndClear();    
@@ -453,7 +486,7 @@ const endGame = () => {
   Your final result: <strong>Game Score: ${score}. Privacy Score: ${privacyScore}</strong>.`)
 }
 
-const increaseDifficulty = () => {
+const increaseDifficulty = () => { //
   const additionalColors = ["pink", "grey", "turquoise"]; // array holding more colours to push into the colors array.
   colors.push(additionalColors[difficulty]); // 
   difficulty += 1; // increase difficulty count which will allow to 'cycle' through the additional colors array.
