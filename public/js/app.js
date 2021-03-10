@@ -96,12 +96,12 @@ const createTiles = () => {
 
   // ====== CHECK FOR 3 IN A ROW MATCHES
 
-  const checkRow = () => {
-    for (let i = 0; i < num ** 2; i++) { // loop through all the tiles in the grid
+  const checkRowMatch = (gridSize, rowMatch) => {
+    for (let i = 0; i < gridSize ** 2; i++) { // loop through all the tiles in the grid
         // we don't want the matching to cross over, hence need an array of the invalidTiles, which restrict the matching.
-        let invalidTiles = createInvalidTilesArray(num, 3);
+        let invalidTiles = createInvalidTilesArray(gridSize, rowMatch); // creates an array of the invalid tiles based on gridSize (size of the grid) and rowMatch (matches in a row required).
         let $divTiles = $(".tile"); // selection of all the tiles
-        let rowOfThree = [...Array(3).keys()]; // automatically an array 3 elements wrong and fill it sequentially from 0.
+        let rowOfThree = [...Array(rowMatch).keys()]; // automatically create an array 3 elements long. keys() iterates through the indexes and fills it sequentially from 0.
         
         if (!invalidTiles.includes(i)) { // check to make sure the current tile is valid
             // save the colours of the three tiles.
@@ -251,7 +251,7 @@ const checkAndClear = () => {
     // check for matches
     checkRowFour();
     checkColFour();
-    checkRowThree();
+    checkRowMatch(num, 3);
     checkColThree(); 
 
     for (let i = 0; i < num**2; i++) { // looping through the tile colors AFTER a check for matches has been made, which will generate blank tiles if matches made.
@@ -277,7 +277,7 @@ const checkSwapValid = () => {
     // checking for any matches!!!
     checkRowFour();
     checkColFour();
-    checkRowThree();
+    checkRowMatch(num, 3);
     checkColThree(); 
 
     // Block1
