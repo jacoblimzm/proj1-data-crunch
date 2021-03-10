@@ -94,77 +94,33 @@ const createTiles = () => {
     return invalidTile
   }
 
-  // ====== CHECK FOR 3 IN A ROW MATCHES
+  // ====== CHECK FOR ROW MATCHES
 
   const checkRowMatch = (gridSize, rowMatch) => {
     for (let i = 0; i < gridSize ** 2; i++) { // loop through all the tiles in the grid
         // we don't want the matching to cross over, hence need an array of the invalidTiles, which restrict the matching.
         let invalidTiles = createInvalidTilesArray(gridSize, rowMatch); // creates an array of the invalid tiles based on gridSize (size of the grid) and rowMatch (matches in a row required).
         let $divTiles = $(".tile"); // selection of all the tiles
-        let rowOfThree = [...Array(rowMatch).keys()]; // automatically create an array 3 elements long. keys() iterates through the indexes and fills it sequentially from 0.
+        let rowIndex = [...Array(rowMatch).keys()]; // automatically create an array rowMatch elements long. keys() iterates through the indexes and fills it sequentially from 0.
         
         if (!invalidTiles.includes(i)) { // check to make sure the current tile is valid
-            // save the colours of the three tiles.
-          let firstTileColor = $divTiles.eq(i).css("background-color");
-          let isBlank = $divTiles.eq(i).css("background-color") === blank;
-          // let tileColor1 = $divTiles.eq(i + 1).css("background-color");
-          // let tileColor2 = $divTiles.eq(i + 2).css("background-color");
+          let firstTileColor = $divTiles.eq(i).css("background-color"); // we want to compare the rest of the tiles to the first.
 
-          // if the tiles are all the same colur, make them all blank!
-          let isEveryTileSame = rowOfThree.every( index => 
-            $divTiles.eq(index + i).css("background-color") === firstTileColor);
+          // booleans
+          let isBlank = $divTiles.eq(i).css("background-color") === blank; // we also need to know if the current tile is blank.
+          let isEveryTileSame = rowIndex.every( index => 
+            $divTiles.eq(index + i).css("background-color") === firstTileColor); // is every tile the same colour? this is where rowIndex comes into play. every can iterate through the index, behaving like a loop.
           
             
-          if (isEveryTileSame && !isBlank) {
-              score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS to prevent adding of score when there are blanks being filled in.
+          if (isEveryTileSame && !isBlank) {  
+              score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS to prevent score build when there are blanks being filled in.
               privacyScore -= 3;
               $("#score").text(score);
-              rowOfThree.forEach( index => $divTiles.eq(index + i).css("background-color", blank));
+              rowIndex.forEach( index => $divTiles.eq(index + i).css("background-color", blank)); // again using rowIndex to iterate down from the current tile.
           }
-
-          // if (tileColor === tileColor1 && tileColor1 === tileColor2) {
-          //   if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
-          //       score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS to prevent adding of score when there are blanks being filled in.
-          //       privacyScore -= 3;
-          //       $("#score").text(score);
-          //   }
-          //   $divTiles.eq(i).css("background-color", blank);
-          //   $divTiles.eq(i + 1).css("background-color", blank);
-          //   $divTiles.eq(i + 2).css("background-color", blank);
-          // }
         }
       }      
   }
-
- // ===== CHECK FOR 4 IN A ROW MATCHES
-
-const checkRowFour = () => { // loop through all the tiles in the grid
-    for (let i = 0; i < num**2; i++) {
-        // we don't want the matching to cross over, hence need an array of the invalidTiles, which restrict the matching.
-        let invalidTiles = [5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53, 54, 55];
-        let $divTiles = $(".tile"); // selection of all the tiles
-        if (!invalidTiles.includes(i)) { // check to make sure the current tile is valid
-            // save the colours of the FOUR tiles.
-          let tileColor = $divTiles.eq(i).css("background-color");
-          let tileColor1 = $divTiles.eq(i + 1).css("background-color");
-          let tileColor2 = $divTiles.eq(i + 2).css("background-color");
-          let tileColor3 = $divTiles.eq(i + 3).css("background-color");
-
-        // if the tiles are all the same colur, make them all blank!
-        if (tileColor === tileColor1 && tileColor1 === tileColor2 && tileColor2 === tileColor3) {
-            if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
-                score += 4; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS
-                privacyScore -= 4;
-                $("#score").text(score);
-            }
-          $divTiles.eq(i).css("background-color", blank);
-          $divTiles.eq(i + 1).css("background-color", blank);
-          $divTiles.eq(i + 2).css("background-color", blank);
-          $divTiles.eq(i + 3).css("background-color", blank);
-        }
-      }
-    }    
-}
 
 
 // ===== CHECK FOR 3 IN A COL MATCH
@@ -249,7 +205,7 @@ const moveTilesDown = () => {
 
 const checkAndClear = () => {
     // check for matches
-    checkRowFour();
+    checkRowMatch(num, 4);
     checkColFour();
     checkRowMatch(num, 3);
     checkColThree(); 
@@ -275,7 +231,7 @@ const checkSwapValid = () => {
     // NOT the best practice but will do for now.
 
     // checking for any matches!!!
-    checkRowFour();
+    checkRowMatch(num, 4);
     checkColFour();
     checkRowMatch(num, 3);
     checkColThree(); 
