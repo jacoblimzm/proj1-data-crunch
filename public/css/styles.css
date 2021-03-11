@@ -1,19 +1,20 @@
-
 body {
     /* background: url("https://cdn.vox-cdn.com/thumbor/ef8rKhLBNRURnMeh1bmBhA7jyDM=/0x0:2040x1360/1225x1225/filters:focal(857x517:1183x843):format(webp)/cdn.vox-cdn.com/uploads/chorus_image/image/64670831/acastro_190703_1777_pixel_tracking_0001.0.jpg"); */
+    font-family: 'Akaya Telivigala', cursive;
     background-size: cover;
-    font-family: Helvetica, sans-serif;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
 }
 
 h1 {
+    font-family: 'Emilys Candy', cursive;
     color: blue;
     text-align: center;
-    font-size: 2rem;
-    margin: 10px;
+    font-size: 3rem;
+    margin: 5px;
 }
+
 h2 {
     text-align: center;
     /* color: white; */
@@ -24,27 +25,34 @@ p {
     text-align: center;
     margin: 15px 10px;
 }
+footer {
+    text-align: center;
+    grid-area: 4/1/5/6;
+}
 
 .clicked {
     box-shadow: 0px 0px 2px 2px #fff;
 }
 
 .tile-grid {
+    background-color: black;
+    /* background-image: url(public/images/magnifying-glass.png); */
     margin: 10px auto;
     height: 560px;
     width: 560px;
-    background-color: black;
     display: flex;
     flex-wrap: wrap;
     align-content: space-around;
     justify-content: space-around;
     grid-area: 1/2/4/5;
+    border-radius: 1rem;
 }
 
 .tile {
     height: 12%;
     width: 12%;
     border-radius: 1rem;
+    background-size: contain;
 }
 
 .form-floating {
@@ -59,9 +67,10 @@ p {
     margin-top: 50px;
     grid-area: 1/2/2/5;
     background-color: white;
-    border: solid black 1px;
     display: none;
+    border: solid black 1px;
     border-radius: 1rem;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .end-game {
@@ -70,11 +79,10 @@ p {
     background-color: white;
     border: solid black 1px;
     border-radius: 1rem;
+    display: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-.appear {
-    display: inline-block;
-}
 
 #landing {
     margin-top: 50px;
@@ -84,7 +92,7 @@ p {
 #landing img {
     display: block;
     margin: 0 auto;
-    height: 40%;
+    height: 35%;
 }
 
 #round-div {
@@ -120,3 +128,4 @@ p {
     position: absolute;
     
 }
+

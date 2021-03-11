@@ -1,4 +1,4 @@
-const colors = ["red", "green", "blue", "yellow", "purple"]; // creating an array of colours so we can assign random colours to the tile divs in the HTML.
+const colors = ["url(public/images/mobile-phone.png)", "url(public/images/location.png)", "url(public/images/camera-with-flash.png)", "url(public/images/magnifying-glass.png)", "url(public/images/house.png)"]; // creating an array of colours so we can assign random colours to the tile divs in the HTML.
 const questions = ["Please provide your address for more moves! 🏠", "Please provide your age for more moves! 📇", "Please provide your gender for more moves! 🏳️‍🌈", "Please provide your browsing history for more moves! 🔎", "Please provide the names of your family members for more moves! 👩‍👩‍👧"];
 let num = 8; // the size of the grid;
 let score = 0;
@@ -7,9 +7,9 @@ let round = 1;
 let privacyScore = 500; // hidden privacy score that user cannot see
 let difficulty = 0;
 let userName = "";
-let blank = "rgb(255, 255, 255)";
+let blank = "none";
 
-let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background color and id for the selected tile, and the intended tile to swap with
+let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background-image and id for the selected tile, and the intended tile to swap with
 let validTilesSwap = []; // array storing position of valid tiles for swapping only if beside each other. ==> click event listener
 const checkColorMatch = []; //array which stores all the colors at at one time, to check if a match has been made after a click. if not, swap tile colour back.
 
@@ -51,9 +51,12 @@ const createBoard = () => {
 
     $buttonDiv = $("<div>").attr("id", "button-div");
     $buttonDiv.append($restartButton).append($diffButton);
-    
+
+
     $("body").append($divRound).append($divScore).append($divMoves).append($divGrid).append($buttonDiv);
 
+
+    
 }
 
 const randInt = () => {
@@ -69,7 +72,7 @@ const createTiles = () => {
     // give them class of "tile" and a unique id each.
     $divTile.addClass("tile").attr("id", i);
     //calling the random number function to pick random colours.
-    $divTile.css("background-color", colors[randInt()]);
+    $divTile.css("background-image", colors[randInt()]);
     $divTile.on("click", clickSwap);
     $divTile.on("mouseover", hoverSwap);
     // append each tile to the body.
@@ -104,12 +107,12 @@ const createTiles = () => {
         let rowIndex = [...Array(rowMatch).keys()]; // automatically create an array rowMatch elements long. keys() iterates through the indexes and fills it sequentially from 0.
         
         if (!invalidTiles.includes(i)) { // check to make sure the current tile is valid
-          let firstTileColor = $divTiles.eq(i).css("background-color"); // we want to compare the rest of the tiles to the first.
+          let firstTileColor = $divTiles.eq(i).css("background-image"); // we want to compare the rest of the tiles to the first.
 
           // booleans
-          let isBlank = $divTiles.eq(i).css("background-color") === blank; // we also need to know if the current tile is blank.
+          let isBlank = $divTiles.eq(i).css("background-image") === blank; // we also need to know if the current tile is blank.
           let isEveryTileSame = rowIndex.every( index => 
-            $divTiles.eq(i + index).css("background-color") === firstTileColor); // is every tile the same colour? this is where rowIndex comes into play. every can iterate through the index, behaving like a loop.
+            $divTiles.eq(i + index).css("background-image") === firstTileColor); // is every tile the same colour? this is where rowIndex comes into play. every can iterate through the index, behaving like a loop.
           
             
           if (isEveryTileSame && !isBlank) {  
@@ -117,7 +120,7 @@ const createTiles = () => {
               privacyScore -= rowMatch;
               $("#score").text(score);
               rowIndex.forEach( index => 
-                $divTiles.eq(i + index).css("background-color", blank)
+                $divTiles.eq(i + index).css("background-image", blank)
                 ); // again using rowIndex to iterate down from the current tile.
           }
         }
@@ -132,13 +135,13 @@ const checkColMatch = (gridSize, colMatch) => {
         // array of invalid tiles not needed here, as columns don't cross.
         let $divTiles = $(".tile");
         let colIndex = [...Array(colMatch).keys()];
-        let firstTileColor = $divTiles.eq(i).css("background-color");
+        let firstTileColor = $divTiles.eq(i).css("background-image");
 
 
         //booleans - similar to checking for rows, we need two booleans for columns. Knowing if the tile is blank(or not) and if it is same colour as the first tile
-        let isBlank = $divTiles.eq(i).css("background-color") === blank;
+        let isBlank = $divTiles.eq(i).css("background-image") === blank;
         let isEveryTileSame = colIndex.every( index => 
-          $divTiles.eq(i + gridSize * index).css("background-color") === firstTileColor
+          $divTiles.eq(i + gridSize * index).css("background-image") === firstTileColor
           );
         
 
@@ -147,7 +150,7 @@ const checkColMatch = (gridSize, colMatch) => {
           privacyScore -= colMatch;
           $("#score").text(score);
           colIndex.forEach( index => 
-            $divTiles.eq(i + gridSize * index).css("background-color", blank)
+            $divTiles.eq(i + gridSize * index).css("background-image", blank)
             );
         }
     }
@@ -159,20 +162,21 @@ const checkColMatch = (gridSize, colMatch) => {
 const moveTilesDown = () => {
     
     for (let i = 0; i< num**2; i++) { // loop through all the tiles
-        const firstRow = [0, 1, 2, 3, 4, 5, 6, 7]; // defining the first row as it is the most important when 'FILLING UP'
+        // const firstRow = [0, 1, 2, 3, 4, 5, 6, 7]; // defining the first row as it is the most important when 'FILLING UP'
+        const firstRow = [...Array(num).keys()];
         let $divTiles = $(".tile"); // selecting all the tiles
-        let tileColor = $divTiles.eq(i).css("background-color"); // we are interested in a color of a tile...
-        let tileColor1 = $divTiles.eq(i + num).css("background-color"); // and the color of the tile directly below it...
+        let tileColor = $divTiles.eq(i).css("background-image"); // we are interested in a-image of a tile...
+        let tileColor1 = $divTiles.eq(i + num).css("background-image"); // and the-image of the tile directly below it...
         
         if (tileColor1 === blank) { // if the tile directly below is blank...
-            $divTiles.eq(i).css("background-color", blank);  // make the tile above blank.
-            $divTiles.eq(i + num).css("background-color", tileColor); // give the tile below the color of the tile above!
+            $divTiles.eq(i).css("background-image", blank);  // make the tile above blank.
+            $divTiles.eq(i + num).css("background-image", tileColor); // give the tile below the-image of the tile above!
             
         }
 
         // if the tile is in the first row, AND it is blank, we want to generate a random colour for it from the colours array.
-        if (firstRow.includes(i) && $divTiles.eq(i).css("background-color") === blank) {
-            $divTiles.eq(i).css("background-color", colors[randInt()]);
+        if (firstRow.includes(i) && $divTiles.eq(i).css("background-image") === blank) {
+            $divTiles.eq(i).css("background-image", colors[randInt()]);
         }
     }
 
@@ -190,7 +194,7 @@ const checkAndClear = () => {
     checkColMatch(num, 3); 
 
     for (let i = 0; i < num**2; i++) { // looping through the tile colors AFTER a check for matches has been made, which will generate blank tiles if matches made.
-        const tileColor = $(".tile").eq(i).css("background-color");
+        const tileColor = $(".tile").eq(i).css("background-image");
         checkColorMatch.push(tileColor) // pushing them into the checkColorMatch holder array
     }     
     while (checkColorMatch.includes(blank)) { // while the array contains a blank
@@ -217,7 +221,7 @@ const checkSwapValid = () => {
 
     // Block1
     for (let i = 0; i < num**2; i++) { // looping through the tile colors AFTER a check for matches has been made.
-        const tileColor = $(".tile").eq(i).css("background-color");
+        const tileColor = $(".tile").eq(i).css("background-image");
         checkColorMatch.push(tileColor) // pushing them into the checkColorMatch holder array
     }     
     
@@ -237,9 +241,9 @@ const checkSwapValid = () => {
         }
     } else { // if no tile is blank, means no match has been made, then it is an invalid move, and tiles will swap back.
         
-        setTimeout(() => { // setTimeOut function to make the color swap back visible.
-            $(".tile").eq(idSwap2).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the color BACK
-            $(".tile").eq(idSwap1).css("background-color", colorSwap1); // using the id which is equivalent to the index, access the tile in the array and swap the color BACK
+        setTimeout(() => { // setTimeOut function to make the-image swap back visible.
+            $(".tile").eq(idSwap2).css("background-image", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the-image BACK
+            $(".tile").eq(idSwap1).css("background-image", colorSwap1); // using the id which is equivalent to the index, access the tile in the array and swap the-image BACK
             idSwap1 = null; // after the swap has been completed, reset the idSwap1.
             colorSwap1 = undefined; // reset colorSwap1 as well.
         }, 150);
@@ -287,8 +291,10 @@ const hoverSwap = (e) => {
   let tileElem = e.target; // grabbing the event object and the target, which is the div, because we are interested in the properties.
   // console.log(tileElem) // console.log to ensure we have grabbed the correct target. the DIV node should be logged.
   let $tileElem = $(tileElem); // wrapping the vanilla JS node in money so it becomes a jQuery object and we can work with it.
-  colorSwap2 = $tileElem.css("background-color"); // store the colour so that we may use it to swap colours.
+  colorSwap2 = $tileElem.css("background-image"); // store the colour so that we may use it to swap colours.
+  console.log(colorSwap2)
   idSwap2 = Number($tileElem.attr("id")); // the attribute is returned as a string by default, so convert into a number.
+  console.log(idSwap2)
   // console.log(colorSwap2); // console.log to make sure we have grabbed the right information
 //   console.log(idSwap2) // console.log to make sure we have grabbed the right information
 };
@@ -307,8 +313,8 @@ const clickSwap = (e) => {
   if (colorSwap1 !== undefined && validTilesSwap.includes(idSwap2)) {
     // we only want to swap the colours if there is an existing colour stored in colorSwap1(which means a prior click has been made), AND the cursor is hovering over a different tile that is VALID.
     // console.log($(".tile").eq(idSwap2)) // check we have selected the right jQuery object.
-    $(".tile").eq(idSwap2).css("background-color", colorSwap1); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
-    $(".tile").eq(idSwap1).css("background-color", colorSwap2); // using the id which is equivalent to the index, access the tile in the array and swap the colours.
+    $(".tile").eq(idSwap2).css("background-image", colorSwap1) // using the id which is equivalent to the index, access the tile in the array and swap the colours.
+    $(".tile").eq(idSwap1).css("background-image", colorSwap2) // using the id which is equivalent to the index, access the tile in the array and swap the colours.
     
     // we want to make sure there are matches, if no matches switch back. this is enclosed in the checkSwapValid() functionality.
     // NOTE: this is a bit of an issue because checkSwapValid will call a few functions as well.
@@ -316,10 +322,10 @@ const clickSwap = (e) => {
     checkSwapValid(); 
     
      
-  } else { // if there is no existing id stored in idSwap1 and color stored in colorSwap1, store upon click.
+  } else { // if there is no existing id stored in idSwap1 and-image stored in colorSwap1, store upon click.
     // because this means game just started, or swap just been made.
     idSwap1 = parseInt($tileElem.attr("id"));
-    colorSwap1 = $tileElem.css("background-color");
+    colorSwap1 = $tileElem.css("background-image");
     // ==== we also want to restrict the tiles that can be swapped to simply the tiles directly beside, above, and below it.
     if (rightEdgeTiles.includes(idSwap1)) {
       // if right edge tile is clicked, the valid tiles for swapping are only above, left, below (which are n(size of grid) tiles away)
@@ -377,7 +383,7 @@ const sendInstructions = (e) => {
     const formData = new FormData(e.target);
     userName = formData.get("user-name"); // the data of the input whic you're interested in MUST have the 'name' attribute.
     e.preventDefault(); // prevent the default refresh behaviour of a form or submit button when submitted.
-    $(".instructions").addClass("appear");
+    $(".instructions").slideDown("slow")
     $(".play").on("click", playGame);
 
 }
@@ -401,6 +407,7 @@ const pauseGame = () => {
 
     $endDiv.append($buttonDiv); 
     $("body").append($endDiv);
+    $endDiv.slideDown("slow");
 }
 
 // ===== CONTINUE GAME WITH MORE MOVES IF USER INDICATES YES.
