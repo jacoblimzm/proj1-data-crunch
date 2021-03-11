@@ -8,11 +8,11 @@ let privacyScore = 500; // hidden privacy score that user cannot see
 let difficulty = 0;
 let userName = "";
 let blank = "none";
+let mouseClick = new Audio("public/sounds/click.mp3")
 
 let colorSwap1, colorSwap2, idSwap1, idSwap2; // creating variables to store the values of the background-image and id for the selected tile, and the intended tile to swap with
 let validTilesSwap = []; // array storing position of valid tiles for swapping only if beside each other. ==> click event listener
 const checkColorMatch = []; //array which stores all the colors at at one time, to check if a match has been made after a click. if not, swap tile colour back.
-
 
 
 // ========== FUNCTIONS FOR CREATING THE BOARD ==========
@@ -301,6 +301,7 @@ const hoverSwap = (e) => {
 
 // CLICK EVENT LISTENER
 const clickSwap = (e) => {
+  mouseClick.play();
   // need the event object which is passed into the callback function from the event listener. can access many properties of the element through the event object.
   let tileElem = e.target; // e.target is the way to access the properties with an anonymous function.
   let $tileElem = $(tileElem);
@@ -429,7 +430,7 @@ const endGame = () => {
 }
 
 const increaseDifficulty = () => { //
-  const additionalColors = ["pink", "grey", "turquoise"]; // array holding more colours to push into the colors array.
+  const additionalColors = ["url(public/images/facebook.webp)", "url(public/images/tiktok.png)", "url(public/images/google-icon.png)", "url(public/images/twitter.png)"]; // array holding more colours to push into the colors array.
   colors.push(additionalColors[difficulty]); // 
   difficulty += 1; // increase difficulty count which will allow to 'cycle' through the additional colors array.
   createBoard(); 
