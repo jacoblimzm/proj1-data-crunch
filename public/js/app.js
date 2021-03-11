@@ -109,14 +109,16 @@ const createTiles = () => {
           // booleans
           let isBlank = $divTiles.eq(i).css("background-color") === blank; // we also need to know if the current tile is blank.
           let isEveryTileSame = rowIndex.every( index => 
-            $divTiles.eq(index + i).css("background-color") === firstTileColor); // is every tile the same colour? this is where rowIndex comes into play. every can iterate through the index, behaving like a loop.
+            $divTiles.eq(i + index).css("background-color") === firstTileColor); // is every tile the same colour? this is where rowIndex comes into play. every can iterate through the index, behaving like a loop.
           
             
           if (isEveryTileSame && !isBlank) {  
               score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS to prevent score build when there are blanks being filled in.
               privacyScore -= 3;
               $("#score").text(score);
-              rowIndex.forEach( index => $divTiles.eq(index + i).css("background-color", blank)); // again using rowIndex to iterate down from the current tile.
+              rowIndex.forEach( index => 
+                $divTiles.eq(i + index).css("background-color", blank)
+                ); // again using rowIndex to iterate down from the current tile.
           }
         }
       }      
@@ -129,21 +131,35 @@ const checkColThree = () => {
     for (let i = 0; i < num ** 2; i++) { // loop through all the tiles in the grid
         // array of invalid tiles not needed here, as columns don't cross.
         let $divTiles = $(".tile");
-        // save the colours of the THREE tiles. one tile below the current is always i + (n * size of grid).
-          let tileColor = $divTiles.eq(i).css("background-color");
-          let tileColor1 = $divTiles.eq(i + num).css("background-color");
-          let tileColor2 = $divTiles.eq(i + num * 2).css("background-color");
-          // if colours are the same, then change all to blank.
-          if (tileColor === tileColor1 && tileColor1 === tileColor2) {
-            if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
-                score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS
-                privacyScore -= 3;
-                $("#score").text(score);
-            }
-            $divTiles.eq(i).css("background-color", blank);
-            $divTiles.eq(i + num * 1).css("background-color", blank);
-            $divTiles.eq(i + num * 2).css("background-color", blank);
-          }
+        let colIndex = [...Array(3).keys()];
+        let firstTileColor = $divTiles.eq(i).css("background-color");
+
+
+        //booleans - similar to checking for rows, we need two booleans for columns. Knowing if the tile is blank(or not) and if it is same colour as the first tile
+        let isBlank = $divTiles.eq(i).css("background-color") === blank;
+        let isEveryTileSame = colIndex.every( index => 
+          $divTiles.eq(i + num * index).css("background-color") === firstTileColor
+          );
+        
+
+        if (isEveryTileSame && !isBlank) {
+          score += 3;
+          privacyScore -= 3;
+          $("#score").text(score);
+          colIndex.forEach( index => 
+            $divTiles.eq(i + num * index).css("background-color", blank)
+            );
+        }
+        // if (tileColor === tileColor1 && tileColor1 === tileColor2) {
+        //   if ($divTiles.eq(i).css("background-color") !== blank) { // but FIRST...!
+        //         score += 3; // add to the overall score of the page IF THE SQUARES ARE NOT BLANKS
+        //         privacyScore -= 3;
+        //         $("#score").text(score);
+        //   }
+        //     $divTiles.eq(i).css("background-color", blank);
+        //     $divTiles.eq(i + num * 1).css("background-color", blank);
+        //     $divTiles.eq(i + num * 2).css("background-color", blank);
+        //   }
         }
 };
 
